@@ -2,6 +2,7 @@ package tv.quaint;
 
 import lombok.Getter;
 import net.streamline.api.command.ModuleCommand;
+import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.modules.dependencies.Dependency;
 import tv.quaint.commands.ChannelCommand;
@@ -11,6 +12,7 @@ import tv.quaint.configs.ChatChannelConfig;
 import tv.quaint.configs.Configs;
 import tv.quaint.configs.Messages;
 import tv.quaint.listeners.MainListener;
+import tv.quaint.ratapi.MessagingExpansion;
 import tv.quaint.timers.ChatterSaver;
 
 import java.io.File;
@@ -36,6 +38,9 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Getter
     static ChatterSaver chatterSaver;
+
+    @Getter
+    static MessagingExpansion messagingExpansion;
 
     @Override
     public String identifier() {
@@ -66,6 +71,7 @@ public class StreamlineMessaging extends SimpleModule {
         instance = this;
         usersFolder = new File(getDataFolder(), "users" + File.separator);
         usersFolder.mkdirs();
+        messagingExpansion = new MessagingExpansion();
     }
 
     @Override
@@ -77,5 +83,6 @@ public class StreamlineMessaging extends SimpleModule {
         chatterSaver = new ChatterSaver();
 
         mainListener = new MainListener();
+        ModuleUtils.listen(mainListener, this);
     }
 }

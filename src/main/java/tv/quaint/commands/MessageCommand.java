@@ -22,8 +22,8 @@ public class MessageCommand extends ModuleCommand {
         );
 
         messageSender = this.getCommandResource().getOrSetDefault("messages.success.sender",
-                "&8[&dYOU &7(&e%streamline_user_server%&7) &9&l>> &d%streamline_parse%this_other%:::*/*streamline_user_formatted*/*%&8] &7%this_message%");
-        messageRecipient = this.getCommandResource().getOrSetDefault("messages.success.sender",
+                "&8[&dYOU &7(&e%streamline_user_server%&7) &9&l>> &d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&8] &7%this_message%");
+        messageRecipient = this.getCommandResource().getOrSetDefault("messages.success.recipient",
                 "&8[&d%streamline_user_formatted% &7(&e%streamline_user_server%&7) &9&l>> &dYOU&8] &7%this_message%");
     }
 

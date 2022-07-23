@@ -11,12 +11,13 @@ import tv.quaint.savables.ChatterManager;
 import tv.quaint.savables.SavableChatter;
 
 public class MainListener implements StreamlineListener {
-    @EventProcessor(priority = EventPriority.HIGH)
+    @EventProcessor(priority = EventPriority.LOWEST)
     public void onChat(StreamlineChatEvent event) {
         if (event.isCanceled()) return;
 
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().uuid);
         chatter.onChannelMessage(event);
+        event.setCanceled(true);
     }
 
     @EventProcessor

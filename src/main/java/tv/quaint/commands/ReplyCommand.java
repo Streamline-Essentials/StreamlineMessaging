@@ -22,29 +22,25 @@ public class ReplyCommand extends ModuleCommand {
         );
 
         messageSender = this.getCommandResource().getOrSetDefault("messages.success.sender",
-                "&8[&dYOU &7(&e%streamline_user_server%&7) &9&l>> &d%streamline_parse%this_other%:::*/*streamline_user_formatted*/*%&8] &7%this_message%");
-        messageRecipient = this.getCommandResource().getOrSetDefault("messages.success.sender",
+                "&8[&dYOU &7(&e%streamline_user_server%&7) &9&l>> &d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&8] &7%this_message%");
+        messageRecipient = this.getCommandResource().getOrSetDefault("messages.success.recipient",
                 "&8[&d%streamline_user_formatted% &7(&e%streamline_user_server%&7) &9&l>> &dYOU&8] &7%this_message%");
     }
 
     @Override
     public void run(SavableUser savableUser, String[] strings) {
-        if (strings.length < 2) {
+        if (strings.length < 1) {
             ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
+        String message = ModuleUtils.argsToString(strings);
 
-        String username = strings[0];
-
-        SavableUser other = ModuleUtils.getOrGetUserByName(username);
+        SavableChatter chatter = ChatterManager.getOrGetChatter(savableUser.uuid);
+        SavableUser other = ModuleUtils.getOrGetUser(chatter.getReplyTo());
         if (other == null) {
             ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
-
-        String message = ModuleUtils.argsToStringMinus(strings, 0);
-
-        SavableChatter chatter = ChatterManager.getOrGetChatter(savableUser.uuid);
         chatter.onReply(other, message, messageSender, messageRecipient);
     }
 

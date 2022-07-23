@@ -4,34 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/MessageCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Configs.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Messages.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/ChatterManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/ChatterSaver.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/chat-channels.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/messages.yml" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fix : Typo.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/MessageCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/MessageCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,6 +103,21 @@
       <option name="presentableId" value="Default" />
       <updated>1658547704280</updated>
     </task>
+    <task id="LOCAL-00001" summary="Update : 1.0">
+      <created>1658559624570</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1658559624570</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix : Typo.">
+      <created>1658559849694</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1658559849694</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -137,5 +130,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Update : 1.0" />
+    <MESSAGE value="Fix : Typo." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix : Typo." />
   </component>
 </project>
