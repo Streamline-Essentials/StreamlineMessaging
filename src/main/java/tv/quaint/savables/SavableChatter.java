@@ -107,11 +107,11 @@ public class SavableChatter extends SavableResource {
     public void onReply(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
         ModuleUtils.sendMessage(asUser(), senderFormat
                 .replace("%this_other%", recipient.getName())
-                .replace("%message%", message)
+                .replace("%this_message%", message)
         );
         ModuleUtils.sendMessage(recipient, recipientFormat
                 .replace("%this_other%", recipient.getName())
-                .replace("%message%", message)
+                .replace("%this_message%", message)
         );
 
         onReply(recipient, message);
@@ -128,11 +128,11 @@ public class SavableChatter extends SavableResource {
     public void onMessage(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
         ModuleUtils.sendMessage(asUser(), senderFormat
                 .replace("%this_other%", recipient.getName())
-                .replace("%message%", message)
+                .replace("%this_message%", message)
         );
         ModuleUtils.sendMessage(recipient, recipientFormat
                 .replace("%this_other%", recipient.getName())
-                .replace("%message%", message)
+                .replace("%this_message%", message)
         );
 
         onMessage(recipient, message);
