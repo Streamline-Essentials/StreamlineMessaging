@@ -9,6 +9,7 @@ import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.savables.ChatterManager;
 import tv.quaint.savables.SavableChatter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelCommand extends ModuleCommand {
@@ -58,6 +59,16 @@ public class ChannelCommand extends ModuleCommand {
 
     @Override
     public List<String> doTabComplete(SavableUser savableUser, String[] strings) {
-        return ModuleUtils.getOnlinePlayerNames();
+        if (strings.length <= 1) {
+            List<String> r = new ArrayList<>();
+
+            StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((a, b) -> {
+                if (ModuleUtils.hasPermission(savableUser, b.accessPermission())) r.add(a);
+            });
+
+            return r;
+        }
+
+        return new ArrayList<>();
     }
 }

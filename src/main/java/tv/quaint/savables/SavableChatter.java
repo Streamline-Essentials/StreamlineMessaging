@@ -149,6 +149,7 @@ public class SavableChatter extends SavableResource {
         }
 
         if (getCurrentChatChannel().identifier().equals("none")) {
+            ModuleUtils.chatAs(asUser(), event.getMessage());
             return;
         }
 
