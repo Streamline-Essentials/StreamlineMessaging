@@ -26,7 +26,7 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
                 });
             }
             case LOCAL -> {
-                ModuleUtils.getUsersOn(identifier()).forEach(a -> {
+                ModuleUtils.getUsersOn(user.latestServer).forEach(a -> {
                     ModuleUtils.sendMessage(a, user, message().replace("%this_message%", message));
                 });
             }
