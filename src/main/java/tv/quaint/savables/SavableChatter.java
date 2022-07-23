@@ -105,6 +105,11 @@ public class SavableChatter extends SavableResource {
     }
 
     public void onReply(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
+        if (this.uuid.equals(recipient.uuid)) {
+            ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
+            return;
+        }
+
         ModuleUtils.sendMessage(asUser(), senderFormat
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)
@@ -126,6 +131,11 @@ public class SavableChatter extends SavableResource {
     }
 
     public void onMessage(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
+        if (this.uuid.equals(recipient.uuid)) {
+            ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
+            return;
+        }
+
         ModuleUtils.sendMessage(asUser(), senderFormat
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)

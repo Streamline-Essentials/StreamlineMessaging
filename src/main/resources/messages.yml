@@ -1,4 +1,6 @@
 errors:
+  messaging:
+    self: "&cYou cannot message yourself!"
   channel:
     is-null: "&cThat channel does not exist or is not loaded!"
     no-access: "&cYou do not have permissions to access that channel!"

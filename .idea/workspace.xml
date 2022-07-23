@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fix : Configs.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fix : Minor touch-ups.">
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Messages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Messages.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/messages.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +129,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658560843935</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fix : Minor touch-ups.">
+      <created>1658561199288</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1658561199288</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -148,6 +155,7 @@
     <MESSAGE value="Fix : Typo." />
     <MESSAGE value="Fix : A few bugs." />
     <MESSAGE value="Fix : Configs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix : Configs." />
+    <MESSAGE value="Fix : Minor touch-ups." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix : Minor touch-ups." />
   </component>
 </project>

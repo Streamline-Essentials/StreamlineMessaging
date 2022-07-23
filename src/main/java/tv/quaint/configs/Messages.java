@@ -8,6 +8,12 @@ public class Messages extends ModularizedConfig {
         super(StreamlineMessaging.getInstance(), "messages.yml", true);
     }
 
+    public String errorsMessagingSelf() {
+        reloadResource();
+
+        return resource.getString("errors.messaging.self");
+    }
+
     public String errorsChannelIsNull() {
         reloadResource();
 
