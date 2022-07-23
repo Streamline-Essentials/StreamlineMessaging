@@ -1,0 +1,30 @@
+# List of custom chat channels.
+# NOTE: the chat channel "none" is bound to default local chat!
+# Current types:
+# ROOM = just a room people can join and leave
+# LOCAL = local server chat only / only goes to players on their server
+# GLOBAL = global network chat / goes to all players on the network
+staff:
+  type: ROOM
+  permissions:
+    access: "streamline.messaging.chats.staff.access"
+    formatting: "streamline.messaging.chats.staff.formatting"
+  message: "&c&lSC &7(&e%streamline_user_server%&7) &9&l>> &c%this_message%"
+builders:
+  type: ROOM
+  permissions:
+    access: "streamline.messaging.chats.builders.access"
+    formatting: "streamline.messaging.chats.builders.formatting"
+  message: "&2&lB &7(&e%streamline_user_server%&7) &9&l>> &2%this_message%"
+global:
+  type: GLOBAL
+  permissions:
+    access: "streamline.messaging.chats.global.access"
+    formatting: "streamline.messaging.chats.global.formatting"
+  message: "&3&lGLOBAL &7(&e%streamline_user_server%&7) &9&l>> &f%this_message%"
+local:
+  type: LOCAL
+  permissions:
+    access: "streamline.messaging.chats.local.access"
+    formatting: "streamline.messaging.chats.local.formatting"
+  message: "&3&lLOCAL &9&l>> &f%this_message%"

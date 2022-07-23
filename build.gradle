@@ -1,0 +1,50 @@
+import java.nio.file.Paths
+
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.1"
+    id "net.kyori.blossom" version "1.2.0"
+}
+
+group 'tv.quaint'
+version '1.0-SNAPSHOT'
+
+project.ext {
+    def dir = layout.buildDirectory.dir('C:\\Users\\nitra\\Dropbox\\Streamline\\Project\\StreamlineAPI\\build\\libs')
+    File[] files = dir.get().getAsFile().listFiles();
+    File dependFile = files[0]
+    fileLocation = dependFile.toPath().toString();
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly "net.luckperms:api:5.4"
+    compileOnly files("${fileLocation}")
+    annotationProcessor files("${fileLocation}")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}
+
+jar.enabled = false
+shadowJar {
+    relocate 'com.github.stefvanschie.inventoryframework', 'com.dndcraft.quaint.crpified.inventoryframework'
+
+    destinationDirectory  = file("$rootDir/build/libs")
+    archiveClassifier.set('')
+}
+
+artifacts {
+    archives shadowJar
+}
+
+blossom {
+    replaceToken '${version}', project.version, 'src/main/resources/plugin.yml'
+}
