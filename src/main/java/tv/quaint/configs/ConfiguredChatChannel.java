@@ -17,7 +17,11 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
     }
 
     public void sendMessageAs(SavableUser user, String message) {
-        if (identifier().equals("none")) return;
+        if (ModuleUtils.isCommand(message)) ModuleUtils.runAs(user, message);
+        if (identifier().equals("none")) {
+            ModuleUtils.chatAs(user, message);
+            return;
+        }
 
         switch (type()) {
             case ROOM -> {
@@ -32,7 +36,6 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
             }
             case GLOBAL -> {
                 ModuleUtils.getLoadedUsers().forEach(a -> {
-                    if (! a.online) return;
                     ModuleUtils.sendMessage(a, user, message().replace("%this_message%", message));
                 });
             }

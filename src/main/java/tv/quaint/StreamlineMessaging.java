@@ -5,6 +5,7 @@ import net.streamline.api.command.ModuleCommand;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.modules.dependencies.Dependency;
+import net.streamline.api.placeholder.RATExpansion;
 import tv.quaint.commands.ChannelCommand;
 import tv.quaint.commands.MessageCommand;
 import tv.quaint.commands.ReplyCommand;
@@ -58,11 +59,11 @@ public class StreamlineMessaging extends SimpleModule {
     }
 
     @Override
-    public List<ModuleCommand> commands() {
-        return List.of(
+    public void registerCommands() {
+        setCommands(List.of(
                 new ChannelCommand(),
                 new MessageCommand(),
-                new ReplyCommand()
+                new ReplyCommand())
         );
     }
 
@@ -71,6 +72,12 @@ public class StreamlineMessaging extends SimpleModule {
         instance = this;
         usersFolder = new File(getDataFolder(), "users" + File.separator);
         usersFolder.mkdirs();
+
+        RATExpansion expansion = ModuleUtils.getRATAPI().getExpansionByIdentifier("messaging");
+        while (expansion != null) {
+            ModuleUtils.getRATAPI().unregisterExpansion(expansion);
+            expansion = ModuleUtils.getRATAPI().getExpansionByIdentifier("messaging");
+        }
         messagingExpansion = new MessagingExpansion();
     }
 

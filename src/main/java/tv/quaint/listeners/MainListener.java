@@ -16,8 +16,7 @@ public class MainListener implements StreamlineListener {
         if (event.isCanceled()) return;
 
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().uuid);
-        chatter.onChannelMessage(event);
-        event.setCanceled(true);
+        event.setCanceled(chatter.onChannelMessage(event));
     }
 
     @EventProcessor

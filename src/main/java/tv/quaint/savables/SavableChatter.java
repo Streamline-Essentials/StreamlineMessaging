@@ -114,7 +114,7 @@ public class SavableChatter extends SavableResource {
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)
         );
-        ModuleUtils.sendMessage(recipient, recipientFormat
+        ModuleUtils.sendMessage(recipient, asUser(), recipientFormat
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)
         );
@@ -140,7 +140,7 @@ public class SavableChatter extends SavableResource {
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)
         );
-        ModuleUtils.sendMessage(recipient, recipientFormat
+        ModuleUtils.sendMessage(recipient, asUser(), recipientFormat
                 .replace("%this_other%", recipient.getName())
                 .replace("%this_message%", message)
         );
@@ -148,26 +148,31 @@ public class SavableChatter extends SavableResource {
         onMessage(recipient, message);
     }
 
-    public void onChannelMessage(StreamlineChatEvent event) {
+    public boolean onChannelMessage(StreamlineChatEvent event) {
         if (getCurrentChatChannel() == null) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsChannelIsNull());
-            return;
+            return false;
+        }
+
+        if (ModuleUtils.isCommand(event.getMessage())) {
+//            ModuleUtils.runAs(event.getSender(), event.getMessage());
+            return false;
+        }
+        if (getCurrentChatChannel().identifier().equals("none")) {
+//            ModuleUtils.chatAs(event.getSender(), event.getMessage());
+            return false;
         }
 
         if (! getCurrentChatChannel().formattingPermission().equals("") && ! ModuleUtils.hasPermission(asUser(), getCurrentChatChannel().formattingPermission())) {
             event.setMessage(ModuleUtils.stripColor(event.getMessage()));
         }
 
-        if (getCurrentChatChannel().identifier().equals("none")) {
-            ModuleUtils.chatAs(asUser(), event.getMessage());
-            return;
-        }
-
         if (! getCurrentChatChannel().accessPermission().equals("") && ! ModuleUtils.hasPermission(asUser(), getCurrentChatChannel().accessPermission())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsChannelNoAccess());
-            return;
+            return false;
         }
 
         getCurrentChatChannel().sendMessageAs(asUser(), event.getMessage());
+        return true;
     }
 }
