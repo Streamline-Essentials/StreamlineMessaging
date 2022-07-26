@@ -9,6 +9,8 @@ import net.streamline.base.events.StreamlineChatEvent;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class SavableChatter extends SavableResource {
     @Getter
     private ConfiguredChatChannel currentChatChannel;
@@ -20,6 +22,8 @@ public class SavableChatter extends SavableResource {
     private String lastMessageSent;
     @Getter @Setter
     private String lastMessageReceived;
+    @Getter @Setter
+    private ConcurrentHashMap<ConfiguredChatChannel, Boolean> viewing = new ConcurrentHashMap<>();
 
     public void setCurrentChatChannel(ConfiguredChatChannel chatChannel) {
         if (! chatChannel.identifier().equals(StreamlineMessaging.getConfigs().defaultChat())) {
@@ -174,5 +178,25 @@ public class SavableChatter extends SavableResource {
 
         getCurrentChatChannel().sendMessageAs(asUser(), event.getMessage());
         return true;
+    }
+
+    public void setViewingEnabled(ConfiguredChatChannel channel, boolean isEnabled) {
+        viewing.put(channel, isEnabled);
+    }
+
+    public boolean isViewing(ConfiguredChatChannel channel) {
+        return getViewing().get(channel);
+    }
+
+    public boolean hasViewingPermission(ConfiguredChatChannel channel) {
+        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.uuid), (channel.viewingInfo().permission()));
+    }
+
+    public boolean canMessageMeFrom(ConfiguredChatChannel channel) {
+        return hasViewingPermission(channel) && isViewing(channel);
+    }
+
+    public boolean canToggleViewing(ConfiguredChatChannel channel) {
+        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.uuid), (channel.viewingInfo().togglePermission()));
     }
 }

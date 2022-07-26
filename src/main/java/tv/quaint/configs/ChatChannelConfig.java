@@ -22,7 +22,11 @@ public class ChatChannelConfig extends ModularizedConfig {
                 String formattingPermission = resource.getString(a + ".permissions.formatting");
                 String message = resource.getString(a + ".message");
 
-                ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, accessPermission, formattingPermission, message);
+                String viewBasePermission = resource.getString(a + ".view.permission");
+                String viewTogglePermission = resource.getString(a + ".view.toggle.permission");
+                ViewingInfo viewingInfo = new ViewingInfo(viewBasePermission, viewTogglePermission);
+
+                ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, accessPermission, formattingPermission, message, viewingInfo);
                 r.put(channel.identifier(), channel);
             } catch (Exception e) {
                 StreamlineMessaging.getInstance().logWarning("Could not load chat channel with identifier '" + a + "' due to: " + e.getMessage());
@@ -30,7 +34,7 @@ public class ChatChannelConfig extends ModularizedConfig {
         });
 
         r.remove("none");
-        r.put("none", new ConfiguredChatChannel("none", ConfiguredChatChannel.Type.LOCAL, "", "", ""));
+        r.put("none", new ConfiguredChatChannel("none", ConfiguredChatChannel.Type.LOCAL, "", "", "", new ViewingInfo("", "")));
 
         return r;
     }

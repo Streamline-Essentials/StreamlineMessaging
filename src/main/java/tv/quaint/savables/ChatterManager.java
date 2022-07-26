@@ -65,11 +65,11 @@ public class ChatterManager {
         return null;
     }
 
-    public static List<SavableChatter> getChattersInChannel(ConfiguredChatChannel channel) {
+    public static List<SavableChatter> getChattersViewingChannel(ConfiguredChatChannel channel) {
         List<SavableChatter> r = new ArrayList<>();
 
         for (SavableChatter chatter : getLoadedChatters().values()) {
-            if (chatter.getCurrentChatChannel().identifier().equals(channel.identifier())) r.add(chatter);
+            if (chatter.canMessageMeFrom(channel)) r.add(chatter);
         }
 
         return r;

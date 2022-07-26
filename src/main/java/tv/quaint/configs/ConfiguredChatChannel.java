@@ -4,10 +4,8 @@ import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.savables.users.SavableUser;
 import tv.quaint.savables.ChatterManager;
 
-import java.util.List;
-
 public record ConfiguredChatChannel(String identifier, Type type, String accessPermission, String formattingPermission,
-                                    String message
+                                    String message, ViewingInfo viewingInfo
 ) {
     public enum Type {
         ROOM,
@@ -25,7 +23,7 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
 
         switch (type()) {
             case ROOM -> {
-                ChatterManager.getChattersInChannel(this).forEach(a -> {
+                ChatterManager.getChattersViewingChannel(this).forEach(a -> {
                     ModuleUtils.sendMessage(a.asUser(), user, message().replace("%this_message%", message));
                 });
             }
