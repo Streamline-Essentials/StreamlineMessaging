@@ -4,3 +4,12 @@ errors:
   channel:
     is-null: "&cThat channel does not exist or is not loaded!"
     no-access: "&cYou do not have permissions to access that channel!"
+
+friends:
+  add: "%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &ewas &aadded &eto &dyour &cfriend&7'&cs list&8!"
+  remove: "%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &ewas &cremoved &efrom &dyour &cfriend&7'&cs list&8!"
+  list:
+    max-per-page: 5
+    entry:
+      not-last: "&d%streamline_user_formatted% &7(&e%streamline_user_online%&7)%newline%"
+      last: "&d%streamline_user_formatted% &7(&e%streamline_user_online%&7)"
