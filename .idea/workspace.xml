@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fix : Actually apply the Friend command.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fix : Index bug.">
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/FriendInviteExpiry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/FriendInviteExpiry.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,7 +187,21 @@
       <option name="project" value="LOCAL" />
       <updated>1659576027653</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Fix : Minor touch-ups.">
+      <created>1659577187208</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1659577187208</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Fix : Index bug.">
+      <created>1659577270667</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1659577270667</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -207,7 +220,6 @@
     <MESSAGE value="Fix : Typo." />
     <MESSAGE value="Fix : A few bugs." />
     <MESSAGE value="Fix : Configs." />
-    <MESSAGE value="Fix : Minor touch-ups." />
     <MESSAGE value="Fix : More minor touch-ups." />
     <MESSAGE value="Fix : Error with wrong server." />
     <MESSAGE value="Fix : Fixed some issues." />
@@ -215,6 +227,8 @@
     <MESSAGE value="???" />
     <MESSAGE value="Update : Version Bump + Friends!" />
     <MESSAGE value="Fix : Actually apply the Friend command." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix : Actually apply the Friend command." />
+    <MESSAGE value="Fix : Minor touch-ups." />
+    <MESSAGE value="Fix : Index bug." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix : Index bug." />
   </component>
 </project>

@@ -43,7 +43,7 @@ public class FriendCommand extends ModuleCommand {
         messageResultRemoveSender = getCommandResource().getOrSetDefault("messages.result.remove.sender", "&dYou &cremoved %streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &eas a friend&8!");
         messageResultRemoveOther = getCommandResource().getOrSetDefault("messages.result.remove.other", "%streamline_user_formatted% &cremoved &dyou &eas a friend&8!");
         messageResultListSelf = getCommandResource().getOrSetDefault("messages.result.list.sender", "&dYour &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
-        messageResultListOther = getCommandResource().getOrSetDefault("messages.result.list.sender", "&d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&7'&es &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
+        messageResultListOther = getCommandResource().getOrSetDefault("messages.result.list.other", "&d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&7'&es &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
 
         permissionListOthers = getCommandResource().getOrSetDefault("basic.permissions.others", "streamline.command.friend.others");
     }

@@ -24,6 +24,11 @@ public class FriendInviteExpiry extends ModuleRunnable {
 
     @Override
     public void run() {
-        sender.handleInviteExpiryEnd(this);
+        if (ticksLeft <= 0) {
+            sender.handleInviteExpiryEnd(this);
+            this.cancel();
+        }
+
+        ticksLeft --;
     }
 }
