@@ -207,16 +207,16 @@ public class FriendCommand extends ModuleCommand {
             );
         }
         if (strings.length == 2) {
-            if (ModuleUtils.equalsAny(strings[1], List.of("add", "remove", "accept", "deny"))) {
+            if (ModuleUtils.equalsAny(strings[0], List.of("add", "remove", "accept", "deny"))) {
                 return ModuleUtils.getOnlinePlayerNames();
             }
-            if (ModuleUtils.equalsAny(strings[1], List.of("list"))) {
+            if (ModuleUtils.equalsAny(strings[0], List.of("list"))) {
                 return List.of("1", "2", "3");
             }
         }
 
         if (strings.length == 3) {
-            if (ModuleUtils.equalsAny(strings[1], List.of("list"))) {
+            if (ModuleUtils.equalsAny(strings[0], List.of("list"))) {
                 return ModuleUtils.getOnlinePlayerNames();
             }
         }
