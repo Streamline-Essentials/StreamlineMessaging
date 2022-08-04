@@ -2,7 +2,6 @@ package tv.quaint.commands;
 
 import net.streamline.api.command.ModuleCommand;
 import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.modules.StreamlineModule;
 import net.streamline.api.savables.users.SavableUser;
 import net.streamline.base.configs.MainMessagesHandler;
 import tv.quaint.StreamlineMessaging;
@@ -21,7 +20,11 @@ public class FriendCommand extends ModuleCommand {
     private String messageResultAcceptOther;
     private String messageResultDenySender;
     private String messageResultDenyOther;
+    private String messageResultRemoveSender;
+    private String messageResultRemoveOther;
     private String messageResultList;
+
+    private String permissionListOthers;
 
     public FriendCommand() {
         super(StreamlineMessaging.getInstance(),
@@ -36,7 +39,11 @@ public class FriendCommand extends ModuleCommand {
         messageResultAcceptOther = getCommandResource().getOrSetDefault("messages.result.accept.other", "%streamline_user_formatted% &aaccepted &dyour &efriend request&8!");
         messageResultDenySender = getCommandResource().getOrSetDefault("messages.result.deny.sender", "&dYou &cdenied %streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&7'&es friend request&8!");
         messageResultDenyOther = getCommandResource().getOrSetDefault("messages.result.deny.other", "%streamline_user_formatted% &cdenied &dyour &efriend request&8!");
+        messageResultRemoveSender = getCommandResource().getOrSetDefault("messages.result.remove.sender", "&dYou &cremoved %streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &eas a friend&8!");
+        messageResultRemoveOther = getCommandResource().getOrSetDefault("messages.result.remove.other", "%streamline_user_formatted% &cremoved &dyou &eas a friend&8!");
         messageResultList = getCommandResource().getOrSetDefault("messages.result.list.sender", "&dYour &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
+
+        permissionListOthers = getCommandResource().getOrSetDefault("basic.permissions.others", "streamline.command.friend.others");
     }
 
     @Override
@@ -64,6 +71,20 @@ public class FriendCommand extends ModuleCommand {
                     }
                 }
 
+                if (strings.length > 3) {
+                    ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+                    return;
+                }
+
+                if (strings.length == 3) {
+                    if (! ModuleUtils.hasPermission(savableUser, permissionListOthers)) {
+                        ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.PERMISSIONS.get());
+                        return;
+                    }
+
+                    chatter = ChatterManager.getOrGetChatter(ModuleUtils.getOrGetUserByName(strings[2]));
+                }
+
                 String p = chatter.getFriendsListPaged().get(page - 1);
 
                 if (p == null) {
@@ -75,8 +96,82 @@ public class FriendCommand extends ModuleCommand {
                         .replace("%this_friends_list%", p)
                 );
             }
-            case "add" -> {
+            case "add", "accept" -> {
+                if (strings.length < 2) {
+                    ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    return;
+                }
 
+                String username = strings[1];
+                SavableUser other = ModuleUtils.getOrGetUserByName(username);
+                if (other == null) {
+                    ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    return;
+                }
+
+                SavableChatter otherChatter = ChatterManager.getOrGetChatter(other.uuid);
+                if (chatter.isMyFriend(otherChatter)) {
+                    ModuleUtils.sendMessage(savableUser, StreamlineMessaging.getMessages().friendsAlreadyFriends());
+                    return;
+                }
+
+                if (chatter.isAlreadyFriendInvited(other.uuid)) {
+                    chatter.removeInviteTo(otherChatter);
+                    otherChatter.removeInviteTo(chatter);
+                    chatter.addFriend(otherChatter);
+                    chatter.addFriendOther(other.uuid);
+
+                    ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultAcceptSender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(savableUser, messageResultAcceptOther, other));
+                } else {
+                    chatter.addInviteTo(otherChatter);
+
+                    ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultRequestSender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(savableUser, messageResultRequestOther, other));
+                }
+            }
+            case "remove", "deny" -> {
+                if (strings.length < 2) {
+                    ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    return;
+                }
+
+                String username = strings[1];
+                SavableUser other = ModuleUtils.getOrGetUserByName(username);
+                if (other == null) {
+                    ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    return;
+                }
+
+                SavableChatter otherChatter = ChatterManager.getOrGetChatter(other.uuid);
+
+                if (chatter.isAlreadyFriendInvited(other.uuid)) {
+                    if (chatter.isMyFriend(otherChatter)) {
+                        ModuleUtils.sendMessage(savableUser, StreamlineMessaging.getMessages().friendsAlreadyFriends());
+                        return;
+                    }
+
+                    chatter.removeInviteTo(otherChatter);
+                    otherChatter.removeInviteTo(chatter);
+                    chatter.addFriend(otherChatter);
+                    otherChatter.addFriend(chatter);
+
+                    ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultDenySender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(savableUser, messageResultDenyOther, other));
+                } else {
+                    if (! chatter.isMyFriend(otherChatter)) {
+                        ModuleUtils.sendMessage(savableUser, StreamlineMessaging.getMessages().friendsAlreadyNotFriends());
+                        return;
+                    }
+
+                    chatter.removeInviteTo(otherChatter);
+                    otherChatter.removeInviteTo(chatter);
+                    chatter.removeFriend(otherChatter);
+                    otherChatter.removeFriend(chatter);
+
+                    ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultRemoveSender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(savableUser, messageResultRemoveOther, other));
+                }
             }
         }
     }

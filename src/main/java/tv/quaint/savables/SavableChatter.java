@@ -8,6 +8,7 @@ import net.streamline.api.savables.users.SavableUser;
 import net.streamline.base.events.StreamlineChatEvent;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
+import tv.quaint.timers.FriendInviteExpiry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,8 @@ public class SavableChatter extends SavableResource {
     private ConcurrentHashMap<ConfiguredChatChannel, Boolean> viewing = new ConcurrentHashMap<>();
     @Getter @Setter
     private TreeMap<Date, String> friends = new TreeMap<>();
+    @Getter @Setter
+    private TreeMap<String, FriendInviteExpiry> friendInvites = new TreeMap<>();
 
     public void setCurrentChatChannel(ConfiguredChatChannel chatChannel) {
         if (! chatChannel.identifier().equals(StreamlineMessaging.getConfigs().defaultChat())) {
@@ -67,6 +70,7 @@ public class SavableChatter extends SavableResource {
             viewing.put(c, storageResource.getOrSetDefault("chat-channel.specific." + s + ".viewing", true));
         });
         friends = new TreeMap<>(storageResource.getOrSetDefault("friends.list", new HashMap<>()));
+        friendInvites = new TreeMap<>();
     }
 
     @Override
@@ -93,6 +97,9 @@ public class SavableChatter extends SavableResource {
             Date date = new Date(Long.parseLong(a));
             getFriends().put(date, storageResource.getOrSetDefault("friends.list." + a, "null"));
         });
+        storageResource.singleLayerKeySet("friends.invites.list").forEach(a -> {
+            getFriendInvites().put(a, new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(a), storageResource.getOrSetDefault("friends.invites.list." + a, StreamlineMessaging.getConfigs().friendInviteTime())));
+        });
     }
 
     @Override
@@ -108,6 +115,9 @@ public class SavableChatter extends SavableResource {
         });
         getFriends().forEach((date, s) -> {
             storageResource.write("friends.list." + date.getTime(), s);
+        });
+        getFriendInvites().forEach((s, expiry) -> {
+            storageResource.write("friends.invites.list." + s, expiry.getTicksLeft());
         });
     }
 
@@ -307,5 +317,31 @@ public class SavableChatter extends SavableResource {
         }
 
         return builder.toString();
+    }
+
+    public boolean isAlreadyFriendInvited(SavableChatter chatter) {
+        return isAlreadyFriendInvited(chatter.uuid);
+    }
+
+    public boolean isAlreadyFriendInvited(String uuid) {
+        return getFriendInvites().containsKey(uuid);
+    }
+
+    public void addInviteTo(SavableChatter chatter) {
+        getFriendInvites().put(chatter.uuid, new FriendInviteExpiry(this, chatter, StreamlineMessaging.getConfigs().friendInviteTime()));
+    }
+
+    public void removeInviteTo(SavableChatter chatter) {
+        getFriendInvites().remove(chatter.uuid);
+    }
+
+    public void handleInviteExpiryEnd(FriendInviteExpiry expiry) {
+        removeInviteTo(expiry.getInvited());
+        ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutSender()
+                .replace("%this_other%", expiry.getInvited().asUser().getName())
+        );
+        ModuleUtils.sendMessage(expiry.getInvited().asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutInvited()
+                .replace("%this_other%", asUser().getName())
+        );
     }
 }

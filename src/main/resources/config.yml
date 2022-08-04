@@ -54,3 +54,10 @@ chatters:
       database: "streamline_chatters"
       # The table (MYSQL) or collection (MONGO) prefix.
       prefix: "sl_"
+
+# Configs for friends.
+friends:
+  # Configs for friend invites.
+  invites:
+    # Time-out in ticks.
+    timeout: 30

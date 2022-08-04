@@ -122,4 +122,12 @@ public class Configs extends ModularizedConfig {
 
         return new DatabaseConfig(savingUri(), savingDatabase(), savingPrefix(), databaseType);
     }
+
+    // FRIENDS
+
+    public int friendInviteTime() {
+        reloadResource();
+
+        return resource.getInt("friends.invites.timeout");
+    }
 }

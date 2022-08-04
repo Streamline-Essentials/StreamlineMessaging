@@ -26,6 +26,18 @@ public class Messages extends ModularizedConfig {
         return resource.getString("errors.channel.no-access");
     }
 
+    public String friendsAlreadyFriends() {
+        reloadResource();
+
+        return resource.getString("friends.already.friends");
+    }
+
+    public String friendsAlreadyNotFriends() {
+        reloadResource();
+
+        return resource.getString("friends.already.not-friends");
+    }
+
     public String friendsAddMessage() {
         reloadResource();
 
@@ -54,5 +66,17 @@ public class Messages extends ModularizedConfig {
         reloadResource();
 
         return resource.getString("friends.list.entry.last");
+    }
+
+    public String friendInviteTimeoutSender() {
+        reloadResource();
+
+        return resource.getString("friends.invite.timeout.sender");
+    }
+
+    public String friendInviteTimeoutInvited() {
+        reloadResource();
+
+        return resource.getString("friends.invite.timeout.invited");
     }
 }
