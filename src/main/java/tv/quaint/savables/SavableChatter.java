@@ -66,6 +66,7 @@ public class SavableChatter extends SavableResource {
         lastMessage = storageResource.getOrSetDefault("messaging.last.normal", "");
         lastMessageSent = storageResource.getOrSetDefault("messaging.last.sent", "");
         lastMessageReceived = storageResource.getOrSetDefault("messaging.last.received", "");
+        viewing = new ConcurrentHashMap<>();
         StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((s, c) -> {
             viewing.put(c, storageResource.getOrSetDefault("chat-channel.specific." + s + ".viewing", true));
         });

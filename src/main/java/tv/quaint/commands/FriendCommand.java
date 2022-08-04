@@ -22,7 +22,8 @@ public class FriendCommand extends ModuleCommand {
     private String messageResultDenyOther;
     private String messageResultRemoveSender;
     private String messageResultRemoveOther;
-    private String messageResultList;
+    private String messageResultListSelf;
+    private String messageResultListOther;
 
     private String permissionListOthers;
 
@@ -41,7 +42,8 @@ public class FriendCommand extends ModuleCommand {
         messageResultDenyOther = getCommandResource().getOrSetDefault("messages.result.deny.other", "%streamline_user_formatted% &cdenied &dyour &efriend request&8!");
         messageResultRemoveSender = getCommandResource().getOrSetDefault("messages.result.remove.sender", "&dYou &cremoved %streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &eas a friend&8!");
         messageResultRemoveOther = getCommandResource().getOrSetDefault("messages.result.remove.other", "%streamline_user_formatted% &cremoved &dyou &eas a friend&8!");
-        messageResultList = getCommandResource().getOrSetDefault("messages.result.list.sender", "&dYour &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
+        messageResultListSelf = getCommandResource().getOrSetDefault("messages.result.list.sender", "&dYour &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
+        messageResultListOther = getCommandResource().getOrSetDefault("messages.result.list.sender", "&d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&7'&es &cfriends &7(&epage %this_page%&7)&8: %this_friends_list%");
 
         permissionListOthers = getCommandResource().getOrSetDefault("basic.permissions.others", "streamline.command.friend.others");
     }
@@ -82,19 +84,36 @@ public class FriendCommand extends ModuleCommand {
                         return;
                     }
 
-                    chatter = ChatterManager.getOrGetChatter(ModuleUtils.getOrGetUserByName(strings[2]));
+                    SavableUser other = ModuleUtils.getOrGetUserByName(strings[2]);
+                    if (other == null) {
+                        ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                        return;
+                    }
+
+                    chatter = ChatterManager.getOrGetChatter(other);
+
+                    String p = chatter.getFriendsListPaged().get(page - 1);
+
+                    if (p == null) {
+                        p = "";
+                    }
+
+                    ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultListOther, other)
+                            .replace("%this_page%", String.valueOf(page))
+                            .replace("%this_friends_list%", p)
+                    );
+                } else {
+                    String p = chatter.getFriendsListPaged().get(page - 1);
+
+                    if (p == null) {
+                        p = "";
+                    }
+
+                    ModuleUtils.sendMessage(savableUser, messageResultListSelf
+                            .replace("%this_page%", String.valueOf(page))
+                            .replace("%this_friends_list%", p)
+                    );
                 }
-
-                String p = chatter.getFriendsListPaged().get(page - 1);
-
-                if (p == null) {
-                    p = "";
-                }
-
-                ModuleUtils.sendMessage(savableUser, messageResultList
-                        .replace("%this_page%", String.valueOf(page))
-                        .replace("%this_friends_list%", p)
-                );
             }
             case "add", "accept" -> {
                 if (strings.length < 2) {
@@ -188,7 +207,18 @@ public class FriendCommand extends ModuleCommand {
             );
         }
         if (strings.length == 2) {
-            return ModuleUtils.getOnlinePlayerNames();
+            if (ModuleUtils.equalsAny(strings[1], List.of("add", "remove", "accept", "deny"))) {
+                return ModuleUtils.getOnlinePlayerNames();
+            }
+            if (ModuleUtils.equalsAny(strings[1], List.of("list"))) {
+                return List.of("1", "2", "3");
+            }
+        }
+
+        if (strings.length == 3) {
+            if (ModuleUtils.equalsAny(strings[1], List.of("list"))) {
+                return ModuleUtils.getOnlinePlayerNames();
+            }
         }
 
         return new ArrayList<>();
