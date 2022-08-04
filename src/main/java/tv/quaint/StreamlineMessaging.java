@@ -7,6 +7,7 @@ import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.modules.dependencies.Dependency;
 import net.streamline.api.placeholder.RATExpansion;
 import tv.quaint.commands.ChannelCommand;
+import tv.quaint.commands.FriendCommand;
 import tv.quaint.commands.MessageCommand;
 import tv.quaint.commands.ReplyCommand;
 import tv.quaint.configs.ChatChannelConfig;
@@ -63,8 +64,9 @@ public class StreamlineMessaging extends SimpleModule {
         setCommands(List.of(
                 new ChannelCommand(),
                 new MessageCommand(),
-                new ReplyCommand())
-        );
+                new ReplyCommand(),
+                new FriendCommand()
+        ));
     }
 
     @Override
