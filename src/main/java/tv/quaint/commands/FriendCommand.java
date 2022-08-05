@@ -134,15 +134,17 @@ public class FriendCommand extends ModuleCommand {
                     return;
                 }
 
-                if (chatter.isAlreadyFriendInvited(other.uuid)) {
-                    chatter.removeInviteTo(otherChatter);
-                    otherChatter.removeInviteTo(chatter);
+                if (otherChatter.isAlreadyFriendInvited(chatter)) {
                     chatter.addFriend(otherChatter);
-                    chatter.addFriendOther(other.uuid);
+                    otherChatter.addFriend(chatter);
 
                     ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultAcceptSender, other));
                     ModuleUtils.sendMessage(other, getWithOther(savableUser, messageResultAcceptOther, other));
                 } else {
+                    if (chatter.isAlreadyFriendInvited(otherChatter)) {
+                        ModuleUtils.sendMessage(savableUser, StreamlineMessaging.getMessages().friendsAlreadyInvited());
+                        return;
+                    }
                     chatter.addInviteTo(otherChatter);
 
                     ModuleUtils.sendMessage(savableUser, getWithOther(savableUser, messageResultRequestSender, other));

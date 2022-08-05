@@ -236,13 +236,14 @@ public class SavableChatter extends SavableResource {
     }
 
     public void addFriend(SavableChatter chatter) {
-        this.addFriend(chatter.uuid);
-    }
-
-    public void addFriend(String uuid) {
+        this.removeInviteTo(chatter);
         getFriends().put(new Date(), uuid);
         ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsAddMessage().replace("%this_other%", uuid));
         StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just added %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a friend!");
+    }
+
+    public void addFriend(String uuid) {
+        this.addFriend(ChatterManager.getOrGetChatter(uuid));
     }
 
     public void addFriendOther(String uuid) {
@@ -251,13 +252,14 @@ public class SavableChatter extends SavableResource {
     }
 
     public void removeFriend(SavableChatter chatter) {
-        this.addFriend(chatter.uuid);
-    }
-
-    public void removeFriend(String uuid) {
+        this.removeInviteTo(chatter);
         getFriends().remove(getFriendedAt(uuid));
         ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsRemoveMessage().replace("%this_other%", uuid));
         StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just removed %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a friend!");
+    }
+
+    public void removeFriend(String uuid) {
+        this.removeFriend(ChatterManager.getOrGetChatter(uuid));
     }
 
     public void removeFriendOther(String uuid) {
@@ -333,7 +335,10 @@ public class SavableChatter extends SavableResource {
     }
 
     public void removeInviteTo(SavableChatter chatter) {
-        getFriendInvites().remove(chatter.uuid);
+        if (isAlreadyFriendInvited(chatter)) {
+            FriendInviteExpiry prev = getFriendInvites().remove(chatter.uuid);
+            prev.cancel();
+        }
     }
 
     public void handleInviteExpiryEnd(FriendInviteExpiry expiry) {

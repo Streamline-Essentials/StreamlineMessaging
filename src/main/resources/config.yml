@@ -60,4 +60,4 @@ friends:
   # Configs for friend invites.
   invites:
     # Time-out in ticks.
-    timeout: 30
+    timeout: 600

@@ -38,6 +38,12 @@ public class Messages extends ModularizedConfig {
         return resource.getString("friends.already.not-friends");
     }
 
+    public String friendsAlreadyInvited() {
+        reloadResource();
+
+        return resource.getString("friends.already.invited");
+    }
+
     public String friendsAddMessage() {
         reloadResource();
 

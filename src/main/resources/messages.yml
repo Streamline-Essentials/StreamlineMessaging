@@ -9,6 +9,7 @@ friends:
   already:
     friends: "&cYou are already friends with this user!"
     not-friends: "&cYou are not this user's friend!"
+    invited: "&cYou already invited this user to be your friend!"
   add: "%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &ewas &aadded &eto &dyour &cfriend&7'&cs list&8!"
   remove: "%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*% &ewas &cremoved &efrom &dyour &cfriend&7'&cs list&8!"
   list:
