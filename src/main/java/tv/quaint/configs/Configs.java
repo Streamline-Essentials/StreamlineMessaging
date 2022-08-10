@@ -7,7 +7,7 @@ import tv.quaint.StreamlineMessaging;
 
 public class Configs extends ModularizedConfig {
     public Configs() {
-        super(StreamlineMessaging.getInstance(), "config.yml", true);
+        super(StreamlineMessaging.getInstance(), "config.yml", false);
     }
 
     /*
@@ -21,19 +21,19 @@ public class Configs extends ModularizedConfig {
     public String defaultChat() {
         reloadResource();
 
-        return resource.getString("chat-channels.default");
+        return resource.getOrSetDefault("chat-channels.default", "none");
     }
 
     public boolean forceDefaultAlways() {
         reloadResource();
 
-        return resource.getBoolean("chat-channels.force-default.always");
+        return resource.getOrSetDefault("chat-channels.force-default.always", false);
     }
 
     public boolean forceDefaultOnJoin() {
         reloadResource();
 
-        return resource.getBoolean("chat-channels.force-default.on-join");
+        return resource.getOrSetDefault("chat-channels.force-default.on-join", true);
     }
 
     /*
@@ -47,37 +47,37 @@ public class Configs extends ModularizedConfig {
     public String messagingMessagePermissionFormatting() {
         reloadResource();
 
-        return resource.getString("messaging.message.permissions.formatting");
+        return resource.getOrSetDefault("messaging.message.permissions.formatting", "streamline.messaging.formatting.message");
     }
 
     public boolean messagingMessageUpdateSender() {
         reloadResource();
 
-        return resource.getBoolean("messaging.message.update-reply-to.sender");
+        return resource.getOrSetDefault("messaging.message.update-reply-to.sender", true);
     }
 
     public boolean messagingMessageUpdateRecipient() {
         reloadResource();
 
-        return resource.getBoolean("messaging.message.update-reply-to.recipient");
+        return resource.getOrSetDefault("messaging.message.update-reply-to.recipient", true);
     }
 
     public String messagingReplyPermissionFormatting() {
         reloadResource();
 
-        return resource.getString("messaging.reply.permissions.formatting");
+        return resource.getOrSetDefault("messaging.reply.permissions.formatting", "streamline.messaging.formatting.message");
     }
 
     public boolean messagingReplyUpdateSender() {
         reloadResource();
 
-        return resource.getBoolean("messaging.reply.update-reply-to.sender");
+        return resource.getOrSetDefault("messaging.reply.update-reply-to.sender", true);
     }
 
     public boolean messagingReplyUpdateRecipient() {
         reloadResource();
 
-        return resource.getBoolean("messaging.reply.update-reply-to.recipient");
+        return resource.getOrSetDefault("messaging.reply.update-reply-to.recipient", true);
     }
 
 
@@ -93,25 +93,25 @@ public class Configs extends ModularizedConfig {
     public StorageUtils.StorageType savingUse() {
         reloadResource();
 
-        return resource.getEnum("chatters.saving.use", StorageUtils.StorageType.class);
+        return StorageUtils.StorageType.valueOf(resource.getOrSetDefault("chatters.saving.use", StorageUtils.StorageType.YAML.toString()));
     }
 
     public String savingUri() {
         reloadResource();
 
-        return resource.getString("chatters.saving.databases.connection-uri");
+        return resource.getOrSetDefault("chatters.saving.databases.connection-uri", "mongodb://<user>:<pass>@<host>:<port>/?authSource=admin&readPreference=primary&appname=StreamlineGroups&ssl=false");
     }
 
     public String savingDatabase() {
         reloadResource();
 
-        return resource.getString("chatters.saving.databases.database");
+        return resource.getOrSetDefault("chatters.saving.databases.database", "streamline_chatters");
     }
 
     public String savingPrefix() {
         reloadResource();
 
-        return resource.getString("chatters.saving.databases.prefix");
+        return resource.getOrSetDefault("chatters.saving.databases.prefix", "sl_");
     }
 
     public DatabaseConfig getConfiguredDatabase() {
@@ -128,6 +128,6 @@ public class Configs extends ModularizedConfig {
     public int friendInviteTime() {
         reloadResource();
 
-        return resource.getInt("friends.invites.timeout");
+        return resource.getOrSetDefault("friends.invites.timeout", 600);
     }
 }

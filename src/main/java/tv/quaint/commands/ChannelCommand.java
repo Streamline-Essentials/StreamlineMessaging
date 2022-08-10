@@ -1,9 +1,9 @@
 package tv.quaint.commands;
 
 import net.streamline.api.command.ModuleCommand;
+import net.streamline.api.configs.given.MainMessagesHandler;
 import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.savables.users.SavableUser;
-import net.streamline.base.configs.MainMessagesHandler;
+import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.savables.ChatterManager;
@@ -30,40 +30,40 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(SavableUser savableUser, String[] strings) {
+    public void run(StreamlineUser StreamlineUser, String[] strings) {
         String identifier;
         if (strings.length < 1) {
             identifier = "none";
         } else if (strings.length > 1) {
-            ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
             return;
         } else {
             identifier = strings[0];
         }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(savableUser.uuid);
+        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
 
         ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(identifier);
         chatter.setCurrentChatChannel(channel);
 
         if (chatter.getCurrentChatChannel().identifier().equals(identifier)) {
-            ModuleUtils.sendMessage(savableUser, messageResultSuccess
+            ModuleUtils.sendMessage(StreamlineUser, messageResultSuccess
                     .replace("%this_identifier%", identifier)
             );
         } else {
-            ModuleUtils.sendMessage(savableUser, messageResultFailure
+            ModuleUtils.sendMessage(StreamlineUser, messageResultFailure
                     .replace("%this_identifier%", identifier)
             );
         }
     }
 
     @Override
-    public List<String> doTabComplete(SavableUser savableUser, String[] strings) {
+    public List<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
         if (strings.length <= 1) {
             List<String> r = new ArrayList<>();
 
             StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((a, b) -> {
-                if (ModuleUtils.hasPermission(savableUser, b.accessPermission())) r.add(a);
+                if (ModuleUtils.hasPermission(StreamlineUser, b.accessPermission())) r.add(a);
             });
 
             return r;

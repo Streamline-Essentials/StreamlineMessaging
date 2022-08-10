@@ -2,10 +2,11 @@ package tv.quaint.savables;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.streamline.api.configs.StorageResource;
+import net.streamline.api.events.server.StreamlineChatEvent;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.savables.SavableResource;
-import net.streamline.api.savables.users.SavableUser;
-import net.streamline.base.events.StreamlineChatEvent;
+import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.timers.FriendInviteExpiry;
@@ -14,6 +15,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SavableChatter extends SavableResource {
+    @Override
+    public StorageResource<?> getStorageResource() {
+        return storageResource;
+    }
+
     @Getter
     private ConfiguredChatChannel currentChatChannel;
     @Getter @Setter
@@ -30,6 +36,10 @@ public class SavableChatter extends SavableResource {
     private TreeMap<Date, String> friends = new TreeMap<>();
     @Getter @Setter
     private TreeMap<String, FriendInviteExpiry> friendInvites = new TreeMap<>();
+    @Getter @Setter
+    private TreeMap<Date, String> bestFriends = new TreeMap<>();
+    @Getter @Setter
+    private boolean acceptingFriendRequests = true;
 
     public void setCurrentChatChannel(ConfiguredChatChannel chatChannel) {
         if (! chatChannel.identifier().equals(StreamlineMessaging.getConfigs().defaultChat())) {
@@ -72,6 +82,8 @@ public class SavableChatter extends SavableResource {
         });
         friends = new TreeMap<>(storageResource.getOrSetDefault("friends.list", new HashMap<>()));
         friendInvites = new TreeMap<>();
+        bestFriends = new TreeMap<>(storageResource.getOrSetDefault("friends.best.list", new HashMap<>()));
+        acceptingFriendRequests = storageResource.getOrSetDefault("friends.invites.accepting", true);
     }
 
     @Override
@@ -94,13 +106,27 @@ public class SavableChatter extends SavableResource {
             boolean viewing = storageResource.getOrSetDefault("chat-channel.specific." + a + ".viewing", true);
             getViewing().put(chatChannel, viewing);
         });
-        storageResource.singleLayerKeySet("friends.list").forEach(a -> {
+        for (String a : storageResource.singleLayerKeySet("friends.list")) {
             Date date = new Date(Long.parseLong(a));
-            getFriends().put(date, storageResource.getOrSetDefault("friends.list." + a, "null"));
-        });
+            String uuid = storageResource.getOrSetDefault("friends.list." + a,
+                    "null");
+            getFriends().put(date, uuid);
+        }
         storageResource.singleLayerKeySet("friends.invites.list").forEach(a -> {
-            getFriendInvites().put(a, new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(a), storageResource.getOrSetDefault("friends.invites.list." + a, StreamlineMessaging.getConfigs().friendInviteTime())));
+            getFriendInvites().put(a, new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(a), StreamlineMessaging.getConfigs().friendInviteTime()));
         });
+//        storageResource.singleLayerKeySet("friends.best.list").forEach(a -> {
+//            Date date = new Date(Long.parseLong(a));
+//            getBestFriends().put(date, storageResource.getOrSetDefault("friends.best.list." + a, "null"));
+//        });
+        for (String a : storageResource.singleLayerKeySet("friends.best.list")) {
+            getBestFriends().put(
+                    new Date(Long.parseLong(a)),
+                    storageResource.getOrSetDefault("friends.best.list." + a,
+                            "null")
+            );
+        }
+        acceptingFriendRequests = storageResource.getOrSetDefault("friends.invites.accepting", acceptingFriendRequests);
     }
 
     @Override
@@ -120,30 +146,34 @@ public class SavableChatter extends SavableResource {
         getFriendInvites().forEach((s, expiry) -> {
             storageResource.write("friends.invites.list." + s, expiry.getTicksLeft());
         });
+        getBestFriends().forEach((date, s) -> {
+            storageResource.write("friends.best.list." + date.getTime(), s);
+        });
+        storageResource.write("friends.invites.accepting", acceptingFriendRequests);
     }
 
     public void loadAfter() {
 
     }
 
-    public SavableUser replyToAsUser() {
+    public StreamlineUser replyToAsUser() {
         return ModuleUtils.getOrGetUser(getReplyTo());
     }
 
-    public SavableUser asUser() {
+    public StreamlineUser asUser() {
         return ModuleUtils.getOrGetUser(this.uuid);
     }
 
-    public void onReply(SavableUser recipient, String message) {
-        SavableChatter other = ChatterManager.getOrGetChatter(recipient.uuid);
-        if (StreamlineMessaging.getConfigs().messagingReplyUpdateSender()) setReplyTo(recipient.uuid);
+    public void onReply(StreamlineUser recipient, String message) {
+        SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUUID());
+        if (StreamlineMessaging.getConfigs().messagingReplyUpdateSender()) setReplyTo(recipient.getUUID());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateRecipient()) other.setReplyTo(this.uuid);
         setLastMessageSent(message);
         other.setLastMessageReceived(message);
     }
 
-    public void onReply(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
-        if (this.uuid.equals(recipient.uuid)) {
+    public void onReply(StreamlineUser recipient, String message, String senderFormat, String recipientFormat) {
+        if (this.uuid.equals(recipient.getUUID())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
         }
@@ -160,16 +190,16 @@ public class SavableChatter extends SavableResource {
         onReply(recipient, message);
     }
 
-    public void onMessage(SavableUser recipient, String message) {
-        SavableChatter other = ChatterManager.getOrGetChatter(recipient.uuid);
-        if (StreamlineMessaging.getConfigs().messagingMessageUpdateSender()) setReplyTo(recipient.uuid);
+    public void onMessage(StreamlineUser recipient, String message) {
+        SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUUID());
+        if (StreamlineMessaging.getConfigs().messagingMessageUpdateSender()) setReplyTo(recipient.getUUID());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateRecipient()) other.setReplyTo(this.uuid);
         setLastMessageSent(message);
         other.setLastMessageReceived(message);
     }
 
-    public void onMessage(SavableUser recipient, String message, String senderFormat, String recipientFormat) {
-        if (this.uuid.equals(recipient.uuid)) {
+    public void onMessage(StreamlineUser recipient, String message, String senderFormat, String recipientFormat) {
+        if (this.uuid.equals(recipient.getUUID())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
         }
@@ -237,8 +267,8 @@ public class SavableChatter extends SavableResource {
 
     public void addFriend(SavableChatter chatter) {
         this.removeInviteTo(chatter);
-        getFriends().put(new Date(), uuid);
-        ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsAddMessage().replace("%this_other%", uuid));
+        getFriends().put(new Date(), chatter.uuid);
+        if (StreamlineMessaging.getMessages().friendsAddSend()) ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsAddMessage().replace("%this_other%", chatter.uuid));
         StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just added %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a friend!");
     }
 
@@ -253,8 +283,8 @@ public class SavableChatter extends SavableResource {
 
     public void removeFriend(SavableChatter chatter) {
         this.removeInviteTo(chatter);
-        getFriends().remove(getFriendedAt(uuid));
-        ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsRemoveMessage().replace("%this_other%", uuid));
+        getFriends().remove(getFriendedAt(chatter.uuid));
+        if (StreamlineMessaging.getMessages().friendsRemoveSend()) ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().friendsRemoveMessage().replace("%this_other%", chatter.uuid));
         StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just removed %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a friend!");
     }
 
@@ -311,7 +341,7 @@ public class SavableChatter extends SavableResource {
         for (int i = start; i < getFriends().size(); i ++) {
             if (i >= start + StreamlineMessaging.getMessages().friendsListMaxPerPage()) continue;
             String uuid = new ArrayList<>(getFriends().values()).get(i);
-            SavableUser user = ModuleUtils.getOrGetUser(uuid);
+            StreamlineUser user = ModuleUtils.getOrGetUser(uuid);
             if (i == start + StreamlineMessaging.getMessages().friendsListMaxPerPage() - 1) {
                 builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().friendsListEntryLast()));
             } else {
@@ -349,5 +379,92 @@ public class SavableChatter extends SavableResource {
         ModuleUtils.sendMessage(expiry.getInvited().asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutInvited()
                 .replace("%this_other%", asUser().getName())
         );
+    }
+
+    public void addBestFriend(SavableChatter chatter) {
+        this.removeInviteTo(chatter);
+        getBestFriends().put(new Date(), chatter.uuid);
+        if (StreamlineMessaging.getMessages().bestFriendsAddSend()) ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().bestFriendsAddMessage().replace("%this_other%", chatter.uuid));
+        StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just added %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a best friend!");
+    }
+
+    public void addBestFriend(String uuid) {
+        this.addBestFriend(ChatterManager.getOrGetChatter(uuid));
+    }
+
+    public void addBestFriendOther(String uuid) {
+        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        chatter.addBestFriend(this);
+    }
+
+    public void removeBestFriend(SavableChatter chatter) {
+        this.removeInviteTo(chatter);
+        getBestFriends().remove(getBestFriendedAt(chatter.uuid));
+        if (StreamlineMessaging.getMessages().bestFriendsRemoveSend()) ModuleUtils.sendMessage(this.uuid, StreamlineMessaging.getMessages().bestFriendsRemoveMessage().replace("%this_other%", chatter.uuid));
+        StreamlineMessaging.getInstance().logInfo("%streamline_parse_" + this.uuid + ":::*/*streamline_user_formatted*/*% just removed %streamline_parse_" + uuid + ":::*/*streamline_user_formatted*/*% as a best friend!");
+    }
+
+    public void removeBestFriend(String uuid) {
+        this.removeBestFriend(ChatterManager.getOrGetChatter(uuid));
+    }
+
+    public void removeBestFriendOther(String uuid) {
+        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        chatter.removeBestFriend(this);
+    }
+
+    public Date getBestFriendedAt(String uuid) {
+        for (Date date : getBestFriends().keySet()) {
+            if (getBestFriends().get(date).equals(uuid)) return date;
+        }
+
+        return null;
+    }
+
+    public Date getMeBestFriendedAtOf(String uuid) {
+        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        return chatter.getBestFriendedAt(this.uuid);
+    }
+
+    public boolean isMyBestFriend(SavableChatter chatter) {
+        return this.isMyBestFriend(chatter.uuid);
+    }
+
+    public boolean isMyBestFriend(String uuid) {
+        return getBestFriends().containsValue(uuid);
+    }
+
+    public boolean isMeBestFriendOf(String uuid) {
+        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        return chatter.isMyBestFriend(this.uuid);
+    }
+
+    public TreeMap<Integer, String> getBestFriendsListPaged() {
+        double times = Math.ceil(getBestFriends().size() / ((double) StreamlineMessaging.getMessages().bestFriendsListMaxPerPage()));
+
+        TreeMap<Integer, String> r = new TreeMap<>();
+
+        for (int i = 0; i < times; i ++) {
+            r.put(i, getBestFriendsListFrom(i * 5));
+        }
+
+        return r;
+    }
+
+    public String getBestFriendsListFrom(int start) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = start; i < getBestFriends().size(); i ++) {
+            if (i >= start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage()) continue;
+            String uuid = new ArrayList<>(getBestFriends().values()).get(i);
+            StreamlineUser user = ModuleUtils.getOrGetUser(uuid);
+            if (i == start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage() - 1) {
+                builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().bestFriendsListEntryLast()));
+            } else {
+                builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().bestFriendsListEntryNotLast()));
+            }
+        }
+
+        return builder.toString();
     }
 }

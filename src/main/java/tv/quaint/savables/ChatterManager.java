@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.configs.*;
 import net.streamline.api.savables.SavableResource;
-import net.streamline.api.savables.users.SavableUser;
+import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 
@@ -44,8 +44,8 @@ public class ChatterManager {
         return chatter;
     }
 
-    public static SavableChatter getOrGetChatter(SavableUser user) {
-        return getOrGetChatter(user.uuid);
+    public static SavableChatter getOrGetChatter(StreamlineUser user) {
+        return getOrGetChatter(user.getUUID());
     }
 
     public static StorageResource<?> newStorageResourceUsers(String uuid, Class<? extends SavableResource> clazz) {

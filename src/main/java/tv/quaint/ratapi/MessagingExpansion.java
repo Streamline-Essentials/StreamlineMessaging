@@ -1,7 +1,9 @@
 package tv.quaint.ratapi;
 
+import net.streamline.api.configs.given.MainMessagesHandler;
+import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.placeholder.RATExpansion;
-import net.streamline.api.savables.users.SavableUser;
+import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.savables.ChatterManager;
@@ -21,8 +23,8 @@ public class MessagingExpansion extends RATExpansion {
     }
 
     @Override
-    public String onRequest(SavableUser savableUser, String s) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(savableUser.uuid);
+    public String onRequest(StreamlineUser StreamlineUser, String s) {
+        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
         if (s.startsWith("channel_")) {
             ConfiguredChatChannel channel = chatter.getCurrentChatChannel();
             if (channel == null) return null;
@@ -41,6 +43,20 @@ public class MessagingExpansion extends RATExpansion {
             if (s.equals("channel_message")) {
                 return channel.message();
             }
+        }
+        if (s.startsWith("friends_with_")) {
+            String username = s.substring("friends_with_".length());
+            SavableChatter otherChatter = ChatterManager.getOrGetChatter(ModuleUtils.getUUIDFromName(username));
+            if (s.equals("friends_with_")) {
+                return chatter.isMyBestFriend(otherChatter) ?
+                        MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
+                        MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_FALSE.get();
+            }
+        }
+        if (s.equals("friend_invites_enabled")) {
+            return chatter.isAcceptingFriendRequests() ?
+                    MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
+                    MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_FALSE.get();
         }
 
         return null;

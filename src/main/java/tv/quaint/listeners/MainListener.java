@@ -4,7 +4,7 @@ import net.streamline.api.events.EventPriority;
 import net.streamline.api.events.EventProcessor;
 import net.streamline.api.events.StreamlineListener;
 import net.streamline.api.events.server.LoginEvent;
-import net.streamline.base.events.StreamlineChatEvent;
+import net.streamline.api.events.server.StreamlineChatEvent;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.savables.ChatterManager;
@@ -15,13 +15,13 @@ public class MainListener implements StreamlineListener {
     public void onChat(StreamlineChatEvent event) {
         if (event.isCanceled()) return;
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().uuid);
+        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUUID());
         event.setCanceled(chatter.onChannelMessage(event));
     }
 
     @EventProcessor
     public void onJoin(LoginEvent event) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().uuid);
+        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUUID());
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {
             ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(StreamlineMessaging.getConfigs().defaultChat());

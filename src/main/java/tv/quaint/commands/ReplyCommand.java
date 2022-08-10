@@ -1,9 +1,9 @@
 package tv.quaint.commands;
 
 import net.streamline.api.command.ModuleCommand;
+import net.streamline.api.configs.given.MainMessagesHandler;
 import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.savables.users.SavableUser;
-import net.streamline.base.configs.MainMessagesHandler;
+import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.savables.ChatterManager;
 import tv.quaint.savables.SavableChatter;
@@ -28,24 +28,24 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(SavableUser savableUser, String[] strings) {
+    public void run(StreamlineUser StreamlineUser, String[] strings) {
         if (strings.length < 1) {
-            ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
         String message = ModuleUtils.argsToString(strings);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(savableUser.uuid);
-        SavableUser other = ModuleUtils.getOrGetUser(chatter.getReplyTo());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
+        StreamlineUser other = ModuleUtils.getOrGetUser(chatter.getReplyTo());
         if (other == null) {
-            ModuleUtils.sendMessage(savableUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
         chatter.onReply(other, message, messageSender, messageRecipient);
     }
 
     @Override
-    public List<String> doTabComplete(SavableUser savableUser, String[] strings) {
+    public List<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }
