@@ -28,17 +28,17 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamlineUser StreamlineUser, String[] strings) {
+    public void run(StreamlineUser streamlineUser, String[] strings) {
         if (strings.length < 1) {
-            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
         String message = ModuleUtils.argsToString(strings);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
         StreamlineUser other = ModuleUtils.getOrGetUser(chatter.getReplyTo());
         if (other == null) {
-            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
         chatter.onReply(other, message, messageSender, messageRecipient);

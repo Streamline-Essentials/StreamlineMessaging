@@ -30,28 +30,28 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamlineUser StreamlineUser, String[] strings) {
+    public void run(StreamlineUser streamlineUser, String[] strings) {
         String identifier;
         if (strings.length < 1) {
             identifier = "none";
         } else if (strings.length > 1) {
-            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
             return;
         } else {
             identifier = strings[0];
         }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
 
         ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(identifier);
         chatter.setCurrentChatChannel(channel);
 
         if (chatter.getCurrentChatChannel().identifier().equals(identifier)) {
-            ModuleUtils.sendMessage(StreamlineUser, messageResultSuccess
+            ModuleUtils.sendMessage(streamlineUser, messageResultSuccess
                     .replace("%this_identifier%", identifier)
             );
         } else {
-            ModuleUtils.sendMessage(StreamlineUser, messageResultFailure
+            ModuleUtils.sendMessage(streamlineUser, messageResultFailure
                     .replace("%this_identifier%", identifier)
             );
         }

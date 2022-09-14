@@ -28,9 +28,9 @@ public class MessageCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamlineUser StreamlineUser, String[] strings) {
+    public void run(StreamlineUser streamlineUser, String[] strings) {
         if (strings.length < 2) {
-            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
 
@@ -38,13 +38,13 @@ public class MessageCommand extends ModuleCommand {
 
         StreamlineUser other = ModuleUtils.getOrGetUserByName(username);
         if (other == null) {
-            ModuleUtils.sendMessage(StreamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
 
         String message = ModuleUtils.argsToStringMinus(strings, 0);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
         chatter.onMessage(other, message, messageSender, messageRecipient);
     }
 

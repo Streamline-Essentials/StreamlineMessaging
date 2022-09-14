@@ -24,7 +24,7 @@ public class MessagingExpansion extends RATExpansion {
 
     @Override
     public String onRequest(StreamlineUser StreamlineUser, String s) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamlineUser.getUuid());
         if (s.startsWith("channel_")) {
             ConfiguredChatChannel channel = chatter.getCurrentChatChannel();
             if (channel == null) return null;

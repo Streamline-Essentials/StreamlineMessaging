@@ -93,5 +93,11 @@ public class StreamlineMessaging extends SimpleModule {
 
         mainListener = new MainListener();
         ModuleUtils.listen(mainListener, this);
+        getMessagingExpansion().register();
+    }
+
+    @Override
+    public void onDisable() {
+        getMessagingExpansion().unregister();
     }
 }

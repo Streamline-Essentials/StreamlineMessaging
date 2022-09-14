@@ -20,11 +20,11 @@ public class ChatterManager {
     private static ConcurrentHashMap<String, SavableChatter> loadedChatters = new ConcurrentHashMap<>();
 
     public static void loadChatter(SavableChatter chatter) {
-        loadedChatters.put(chatter.uuid, chatter);
+        loadedChatters.put(chatter.getUuid(), chatter);
     }
 
     public static void unloadChatter(SavableChatter chatter) {
-        unloadChatter(chatter.uuid);
+        unloadChatter(chatter.getUuid());
     }
 
     public static void unloadChatter(String uuid) {
@@ -45,7 +45,7 @@ public class ChatterManager {
     }
 
     public static SavableChatter getOrGetChatter(StreamlineUser user) {
-        return getOrGetChatter(user.getUUID());
+        return getOrGetChatter(user.getUuid());
     }
 
     public static StorageResource<?> newStorageResourceUsers(String uuid, Class<? extends SavableResource> clazz) {

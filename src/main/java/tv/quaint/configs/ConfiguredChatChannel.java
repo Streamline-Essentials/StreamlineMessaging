@@ -33,7 +33,7 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
                 });
             }
             case GLOBAL -> {
-                ModuleUtils.getLoadedUsers().forEach(a -> {
+                ModuleUtils.getLoadedUsersSet().forEach(a -> {
                     ModuleUtils.sendMessage(a, user, message().replace("%this_message%", message));
                 });
             }

@@ -15,13 +15,13 @@ public class MainListener implements StreamlineListener {
     public void onChat(StreamlineChatEvent event) {
         if (event.isCanceled()) return;
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUuid());
         event.setCanceled(chatter.onChannelMessage(event));
     }
 
     @EventProcessor
     public void onJoin(LoginEvent event) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUUID());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUuid());
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {
             ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(StreamlineMessaging.getConfigs().defaultChat());
