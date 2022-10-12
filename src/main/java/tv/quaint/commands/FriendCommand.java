@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class FriendCommand extends ModuleCommand {
     private String messageResultRequestSender;
@@ -321,9 +322,9 @@ public class FriendCommand extends ModuleCommand {
     }
 
     @Override
-    public List<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
         if (strings.length <= 1) {
-            return List.of(
+            return new ConcurrentSkipListSet<>(List.of(
                     "list",
                     "add",
                     "remove",
@@ -332,14 +333,14 @@ public class FriendCommand extends ModuleCommand {
                     "teleport",
                     "best",
                     "toggle"
-            );
+            ));
         }
         if (strings.length == 2) {
             if (ModuleUtils.equalsAny(strings[0], List.of("add", "remove", "accept", "deny"))) {
                 return ModuleUtils.getOnlinePlayerNames();
             }
             if (ModuleUtils.equalsAny(strings[0], List.of("list"))) {
-                return List.of("1", "2", "3");
+                return new ConcurrentSkipListSet<>(List.of("1", "2", "3"));
             }
         }
 
@@ -348,10 +349,10 @@ public class FriendCommand extends ModuleCommand {
                 return ModuleUtils.getOnlinePlayerNames();
             }
             if (ModuleUtils.equalsAny(strings[0], List.of("best"))) {
-                return List.of("remove", "add", "toggle", "check");
+                return new ConcurrentSkipListSet<>(List.of("remove", "add", "toggle", "check"));
             }
         }
 
-        return new ArrayList<>();
+        return new ConcurrentSkipListSet<>();
     }
 }

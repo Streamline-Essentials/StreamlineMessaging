@@ -11,6 +11,7 @@ import tv.quaint.savables.SavableChatter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ChannelCommand extends ModuleCommand {
     private String messageResultSuccess;
@@ -58,9 +59,9 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public List<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
         if (strings.length <= 1) {
-            List<String> r = new ArrayList<>();
+            ConcurrentSkipListSet<String> r = new ConcurrentSkipListSet<>();
 
             StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((a, b) -> {
                 if (ModuleUtils.hasPermission(StreamlineUser, b.accessPermission())) r.add(a);
@@ -69,6 +70,6 @@ public class ChannelCommand extends ModuleCommand {
             return r;
         }
 
-        return new ArrayList<>();
+        return new ConcurrentSkipListSet<>();
     }
 }

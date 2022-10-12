@@ -9,6 +9,7 @@ import tv.quaint.savables.ChatterManager;
 import tv.quaint.savables.SavableChatter;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ReplyCommand extends ModuleCommand {
     private String messageSender;
@@ -45,7 +46,7 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public List<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }

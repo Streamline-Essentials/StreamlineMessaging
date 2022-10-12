@@ -10,7 +10,7 @@ import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.savables.ChatterManager;
 import tv.quaint.savables.SavableChatter;
 
-public class MainListener implements StreamlineListener {
+public class MainListener extends StreamlineListener {
     @EventProcessor(priority = EventPriority.LOWEST)
     public void onChat(StreamlineChatEvent event) {
         if (event.isCanceled()) return;

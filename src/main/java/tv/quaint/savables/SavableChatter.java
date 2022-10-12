@@ -13,6 +13,7 @@ import tv.quaint.timers.FriendInviteExpiry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class SavableChatter extends SavableResource {
     @Override
@@ -33,11 +34,11 @@ public class SavableChatter extends SavableResource {
     @Getter @Setter
     private ConcurrentHashMap<ConfiguredChatChannel, Boolean> viewing = new ConcurrentHashMap<>();
     @Getter @Setter
-    private TreeMap<Date, String> friends = new TreeMap<>();
+    private ConcurrentSkipListMap<Date, String> friends = new ConcurrentSkipListMap<>();
     @Getter @Setter
-    private TreeMap<String, FriendInviteExpiry> friendInvites = new TreeMap<>();
+    private ConcurrentSkipListMap<String, FriendInviteExpiry> friendInvites = new ConcurrentSkipListMap<>();
     @Getter @Setter
-    private TreeMap<Date, String> bestFriends = new TreeMap<>();
+    private ConcurrentSkipListMap<Date, String> bestFriends = new ConcurrentSkipListMap<>();
     @Getter @Setter
     private boolean acceptingFriendRequests = true;
 
@@ -80,9 +81,9 @@ public class SavableChatter extends SavableResource {
         StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((s, c) -> {
             viewing.put(c, getStorageResource().getOrSetDefault("chat-channel.specific." + s + ".viewing", true));
         });
-        friends = new TreeMap<>(getStorageResource().getOrSetDefault("friends.list", new HashMap<>()));
-        friendInvites = new TreeMap<>();
-        bestFriends = new TreeMap<>(getStorageResource().getOrSetDefault("friends.best.list", new HashMap<>()));
+        friends = new ConcurrentSkipListMap<>(getStorageResource().getOrSetDefault("friends.list", new HashMap<>()));
+        friendInvites = new ConcurrentSkipListMap<>();
+        bestFriends = new ConcurrentSkipListMap<>(getStorageResource().getOrSetDefault("friends.best.list", new HashMap<>()));
         acceptingFriendRequests = getStorageResource().getOrSetDefault("friends.invites.accepting", true);
     }
 
@@ -107,10 +108,14 @@ public class SavableChatter extends SavableResource {
             getViewing().put(chatChannel, viewing);
         });
         for (String a : getStorageResource().singleLayerKeySet("friends.list")) {
-            Date date = new Date(Long.parseLong(a));
-            String uuid = getStorageResource().getOrSetDefault("friends.list." + a,
-                    "null");
-            getFriends().put(date, uuid);
+            try {
+                Date date = new Date(Long.parseLong(a));
+                String uuid = getStorageResource().getOrSetDefault("friends.list." + a,
+                        "null");
+                getFriends().put(date, uuid);
+            } catch (Exception e) {
+                // do nothing.
+            }
         }
         getStorageResource().singleLayerKeySet("friends.invites.list").forEach(a -> {
             getFriendInvites().put(a, new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(a), StreamlineMessaging.getConfigs().friendInviteTime()));

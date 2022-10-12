@@ -2,6 +2,7 @@ package tv.quaint.configs;
 
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.savables.users.StreamlineUser;
+import tv.quaint.events.ChannelMessageEvent;
 import tv.quaint.savables.ChatterManager;
 
 public record ConfiguredChatChannel(String identifier, Type type, String accessPermission, String formattingPermission,
@@ -38,5 +39,7 @@ public record ConfiguredChatChannel(String identifier, Type type, String accessP
                 });
             }
         }
+
+        ModuleUtils.fireEvent(new ChannelMessageEvent(this, user, message));
     }
 }

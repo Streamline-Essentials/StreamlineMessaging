@@ -14,10 +14,12 @@ import tv.quaint.configs.ConfiguredChatChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ChatterManager {
     @Getter @Setter
-    private static ConcurrentHashMap<String, SavableChatter> loadedChatters = new ConcurrentHashMap<>();
+    private static ConcurrentSkipListMap<String, SavableChatter> loadedChatters = new ConcurrentSkipListMap<>();
 
     public static void loadChatter(SavableChatter chatter) {
         loadedChatters.put(chatter.getUuid(), chatter);
@@ -70,12 +72,12 @@ public class ChatterManager {
         return null;
     }
 
-    public static List<SavableChatter> getChattersViewingChannel(ConfiguredChatChannel channel) {
-        List<SavableChatter> r = new ArrayList<>();
+    public static ConcurrentSkipListSet<SavableChatter> getChattersViewingChannel(ConfiguredChatChannel channel) {
+        ConcurrentSkipListSet<SavableChatter> r = new ConcurrentSkipListSet<>();
 
-        for (SavableChatter chatter : getLoadedChatters().values()) {
-            if (chatter.canMessageMeFrom(channel)) r.add(chatter);
-        }
+        getLoadedChatters().forEach((s, savableChatter) -> {
+            if (savableChatter.canMessageMeFrom(channel)) r.add(savableChatter);
+        });
 
         return r;
     }

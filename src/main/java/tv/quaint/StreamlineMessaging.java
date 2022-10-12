@@ -6,6 +6,7 @@ import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.modules.dependencies.Dependency;
 import net.streamline.api.placeholder.RATExpansion;
+import org.pf4j.PluginWrapper;
 import tv.quaint.commands.ChannelCommand;
 import tv.quaint.commands.FriendCommand;
 import tv.quaint.commands.MessageCommand;
@@ -44,19 +45,8 @@ public class StreamlineMessaging extends SimpleModule {
     @Getter
     static MessagingExpansion messagingExpansion;
 
-    @Override
-    public String identifier() {
-        return "streamline-messaging";
-    }
-
-    @Override
-    public List<String> authors() {
-        return List.of("Quaint");
-    }
-
-    @Override
-    public List<Dependency> dependencies() {
-        return Collections.emptyList();
+    public StreamlineMessaging(PluginWrapper wrapper) {
+        super(wrapper);
     }
 
     @Override
