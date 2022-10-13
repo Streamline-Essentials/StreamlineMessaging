@@ -5,7 +5,7 @@ import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.events.ChannelMessageEvent;
 import tv.quaint.savables.ChatterManager;
 
-public record ConfiguredChatChannel(String identifier, Type type, String accessPermission, String formattingPermission,
+public record ConfiguredChatChannel(String identifier, Type type, String prefix, String accessPermission, String formattingPermission,
                                     String message, ViewingInfo viewingInfo
 ) {
     public enum Type {

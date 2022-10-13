@@ -7,9 +7,11 @@
     <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Version : Bump.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Configs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Configs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/chat-channels.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/chat-channels.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665560381638</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Version : Bump.">
+      <created>1665675752046</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1665675752046</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

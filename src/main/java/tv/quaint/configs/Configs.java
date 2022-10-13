@@ -7,7 +7,27 @@ import tv.quaint.StreamlineMessaging;
 
 public class Configs extends ModularizedConfig {
     public Configs() {
-        super(StreamlineMessaging.getInstance(), "config.yml", false);
+        super(StreamlineMessaging.getInstance(), "config.yml", true);
+        init();
+    }
+
+    public void init() {
+        defaultChat();
+        forceDefaultAlways();
+        forceDefaultOnJoin();
+
+        messagingMessagePermissionFormatting();
+        messagingMessageUpdateSender();
+        messagingMessageUpdateRecipient();
+
+        messagingReplyPermissionFormatting();
+        messagingReplyUpdateSender();
+        messagingReplyUpdateRecipient();
+
+        savingUse();
+        savingUri();
+        savingDatabase();
+        savingDatabase();
     }
 
     /*

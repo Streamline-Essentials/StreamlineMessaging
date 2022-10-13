@@ -6,6 +6,7 @@
 # GLOBAL = global network chat / goes to all players on the network
 staff:
   type: ROOM
+  prefix: "#"
   permissions:
     access: "streamline.messaging.chats.staff.access"
     formatting: "streamline.messaging.chats.staff.formatting"
@@ -16,6 +17,7 @@ staff:
       permission: "streamline.messaging.chats.staff.toggle"
 builders:
   type: ROOM
+  prefix: "B#"
   permissions:
     access: "streamline.messaging.chats.builders.access"
     formatting: "streamline.messaging.chats.builders.formatting"
@@ -26,6 +28,7 @@ builders:
       permission: "streamline.messaging.chats.builders.toggle"
 global:
   type: GLOBAL
+  prefix: "!"
   permissions:
     access: "streamline.messaging.chats.global.access"
     formatting: "streamline.messaging.chats.global.formatting"
@@ -36,6 +39,7 @@ global:
       permission: "streamline.messaging.chats.global.toggle"
 local:
   type: LOCAL
+  prefix: "?"
   permissions:
     access: "streamline.messaging.chats.local.access"
     formatting: "streamline.messaging.chats.local.formatting"
