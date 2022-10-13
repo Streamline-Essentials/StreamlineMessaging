@@ -74,7 +74,7 @@ public class FriendCommand extends ModuleCommand {
     @Override
     public void run(StreamlineUser streamlineUser, String[] strings) {
         String action;
-        if (strings.length < 1) {
+        if (strings[0].equals("")) {
             action = "list";
         } else {
             action = strings[0];

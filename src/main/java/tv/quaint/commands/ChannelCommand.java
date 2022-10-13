@@ -33,7 +33,7 @@ public class ChannelCommand extends ModuleCommand {
     @Override
     public void run(StreamlineUser streamlineUser, String[] strings) {
         String identifier;
-        if (strings.length < 1) {
+        if (strings[0].equals("")) {
             identifier = "none";
         } else if (strings.length > 1) {
             ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());

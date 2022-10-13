@@ -30,7 +30,7 @@ public class ReplyCommand extends ModuleCommand {
 
     @Override
     public void run(StreamlineUser streamlineUser, String[] strings) {
-        if (strings.length < 1) {
+        if (strings[0].equals("")) {
             ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
