@@ -1,16 +1,17 @@
 package tv.quaint.configs;
 
-import net.streamline.api.configs.DatabaseConfig;
 import net.streamline.api.configs.ModularizedConfig;
-import net.streamline.api.configs.StorageUtils;
 import tv.quaint.StreamlineMessaging;
+import tv.quaint.storage.StorageUtils;
+import tv.quaint.storage.resources.databases.configurations.DatabaseConfig;
+import tv.quaint.thebase.lib.leonhard.storage.sections.FlatFileSection;
 
 public class Configs extends ModularizedConfig {
     public Configs() {
         super(StreamlineMessaging.getInstance(), "config.yml", true);
-        init();
     }
 
+    @Override
     public void init() {
         defaultChat();
         forceDefaultAlways();
@@ -25,9 +26,6 @@ public class Configs extends ModularizedConfig {
         messagingReplyUpdateRecipient();
 
         savingUse();
-        savingUri();
-        savingDatabase();
-        savingDatabase();
     }
 
     /*
@@ -41,19 +39,19 @@ public class Configs extends ModularizedConfig {
     public String defaultChat() {
         reloadResource();
 
-        return resource.getOrSetDefault("chat-channels.default", "none");
+        return getResource().getOrSetDefault("chat-channels.default", "none");
     }
 
     public boolean forceDefaultAlways() {
         reloadResource();
 
-        return resource.getOrSetDefault("chat-channels.force-default.always", false);
+        return getResource().getOrSetDefault("chat-channels.force-default.always", false);
     }
 
     public boolean forceDefaultOnJoin() {
         reloadResource();
 
-        return resource.getOrSetDefault("chat-channels.force-default.on-join", true);
+        return getResource().getOrSetDefault("chat-channels.force-default.on-join", true);
     }
 
     /*
@@ -67,37 +65,37 @@ public class Configs extends ModularizedConfig {
     public String messagingMessagePermissionFormatting() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.message.permissions.formatting", "streamline.messaging.formatting.message");
+        return getResource().getOrSetDefault("messaging.message.permissions.formatting", "streamline.messaging.formatting.message");
     }
 
     public boolean messagingMessageUpdateSender() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.message.update-reply-to.sender", true);
+        return getResource().getOrSetDefault("messaging.message.update-reply-to.sender", true);
     }
 
     public boolean messagingMessageUpdateRecipient() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.message.update-reply-to.recipient", true);
+        return getResource().getOrSetDefault("messaging.message.update-reply-to.recipient", true);
     }
 
     public String messagingReplyPermissionFormatting() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.reply.permissions.formatting", "streamline.messaging.formatting.message");
+        return getResource().getOrSetDefault("messaging.reply.permissions.formatting", "streamline.messaging.formatting.message");
     }
 
     public boolean messagingReplyUpdateSender() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.reply.update-reply-to.sender", true);
+        return getResource().getOrSetDefault("messaging.reply.update-reply-to.sender", true);
     }
 
     public boolean messagingReplyUpdateRecipient() {
         reloadResource();
 
-        return resource.getOrSetDefault("messaging.reply.update-reply-to.recipient", true);
+        return getResource().getOrSetDefault("messaging.reply.update-reply-to.recipient", true);
     }
 
 
@@ -110,37 +108,40 @@ public class Configs extends ModularizedConfig {
      */
 
 
-    public StorageUtils.StorageType savingUse() {
+    public StorageUtils.SupportedStorageType savingUse() {
         reloadResource();
 
-        return StorageUtils.StorageType.valueOf(resource.getOrSetDefault("chatters.saving.use", StorageUtils.StorageType.YAML.toString()));
-    }
-
-    public String savingUri() {
-        reloadResource();
-
-        return resource.getOrSetDefault("chatters.saving.databases.connection-uri", "mongodb://<user>:<pass>@<host>:<port>/?authSource=admin&readPreference=primary&appname=StreamlineGroups&ssl=false");
-    }
-
-    public String savingDatabase() {
-        reloadResource();
-
-        return resource.getOrSetDefault("chatters.saving.databases.database", "streamline_chatters");
-    }
-
-    public String savingPrefix() {
-        reloadResource();
-
-        return resource.getOrSetDefault("chatters.saving.databases.prefix", "sl_");
+        return StorageUtils.SupportedStorageType.valueOf(getResource().getOrSetDefault("chatters.saving.use", StorageUtils.SupportedStorageType.YAML.toString()));
     }
 
     public DatabaseConfig getConfiguredDatabase() {
-        StorageUtils.DatabaseType databaseType = null;
-        if (savingUse().equals(StorageUtils.StorageType.MONGO)) databaseType = StorageUtils.DatabaseType.MONGO;
-        if (savingUse().equals(StorageUtils.StorageType.MYSQL)) databaseType = StorageUtils.DatabaseType.MYSQL;
-        if (databaseType == null) return null;
+        FlatFileSection section = getResource().getSection("chatters.saving.database");
 
-        return new DatabaseConfig(savingUri(), savingDatabase(), savingPrefix(), databaseType);
+        StorageUtils.SupportedDatabaseType type = StorageUtils.SupportedDatabaseType.valueOf(section.getOrSetDefault("type", StorageUtils.SupportedDatabaseType.SQLITE.toString()));
+        String link;
+        switch (type) {
+            case MONGO:
+                link = section.getOrDefault("link", "mongodb://{{user}}:{{pass}}@{{host}}:{{port}}/{{database}}");
+                break;
+            case MYSQL:
+                link = section.getOrDefault("link", "jdbc:mysql://{{host}}:{{port}}/{{database}}{{options}}");
+                break;
+            case SQLITE:
+                link = section.getOrDefault("link", "jdbc:sqlite:{{database}}.db");
+                break;
+            default:
+                link = section.getOrSetDefault("link", "jdbc:sqlite:{{database}}.db");
+                break;
+        }
+        String host = section.getOrSetDefault("host", "localhost");
+        int port = section.getOrSetDefault("port", 3306);
+        String username = section.getOrSetDefault("username", "user");
+        String password = section.getOrSetDefault("password", "pass1234");
+        String database = section.getOrSetDefault("database", "streamline");
+        String tablePrefix = section.getOrSetDefault("table-prefix", "sl_");
+        String options = section.getOrSetDefault("options", "?useSSL=false&serverTimezone=UTC");
+
+        return new DatabaseConfig(type, link, host, port, username, password, database, tablePrefix, options);
     }
 
     // FRIENDS
@@ -148,6 +149,6 @@ public class Configs extends ModularizedConfig {
     public int friendInviteTime() {
         reloadResource();
 
-        return resource.getOrSetDefault("friends.invites.timeout", 600);
+        return getResource().getOrSetDefault("friends.invites.timeout", 600);
     }
 }

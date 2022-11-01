@@ -16,11 +16,13 @@ import tv.quaint.configs.Configs;
 import tv.quaint.configs.Messages;
 import tv.quaint.listeners.MainListener;
 import tv.quaint.ratapi.MessagingExpansion;
+import tv.quaint.savables.ChatterManager;
 import tv.quaint.timers.ChatterSaver;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class StreamlineMessaging extends SimpleModule {
     @Getter
@@ -88,6 +90,17 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Override
     public void onDisable() {
+        ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> {
+            savableChatter.saveAll();
+            savableChatter.getStorageResource().push();
+        });
+        ChatterManager.setLoadedChatters(new ConcurrentSkipListMap<>());
+
         getMessagingExpansion().unregister();
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier();
     }
 }

@@ -10,21 +10,26 @@ public class ChatChannelConfig extends ModularizedConfig {
         super(StreamlineMessaging.getInstance(), "chat-channels.yml", true);
     }
 
+    @Override
+    public void init() {
+
+    }
+
     public TreeMap<String, ConfiguredChatChannel> getChatChannels() {
         reloadResource();
 
         TreeMap<String, ConfiguredChatChannel> r = new TreeMap<>();
 
-        resource.singleLayerKeySet().forEach(a -> {
+        getResource().singleLayerKeySet().forEach(a -> {
             try {
-                ConfiguredChatChannel.Type t = ConfiguredChatChannel.Type.valueOf(resource.getOrSetDefault(a + ".type", ConfiguredChatChannel.Type.ROOM.toString()));
-                String prefix = resource.getOrSetDefault(a + ".prefix", "");
-                String accessPermission = resource.getOrSetDefault(a + ".permissions.access", "streamline.messaging.chats." + a + ".access");
-                String formattingPermission = resource.getOrSetDefault(a + ".permissions.formatting", "streamline.messaging.chats." + a + ".formatting");
-                String message = resource.getOrSetDefault(a + ".message", "%this_message%");
+                ConfiguredChatChannel.Type t = ConfiguredChatChannel.Type.valueOf(getResource().getOrSetDefault(a + ".type", ConfiguredChatChannel.Type.ROOM.toString()));
+                String prefix = getResource().getOrSetDefault(a + ".prefix", "");
+                String accessPermission = getResource().getOrSetDefault(a + ".permissions.access", "streamline.messaging.chats." + a + ".access");
+                String formattingPermission = getResource().getOrSetDefault(a + ".permissions.formatting", "streamline.messaging.chats." + a + ".formatting");
+                String message = getResource().getOrSetDefault(a + ".message", "%this_message%");
 
-                String viewBasePermission = resource.getOrSetDefault(a + ".view.permission", "streamline.messaging.chats." + a + ".view");
-                String viewTogglePermission = resource.getOrSetDefault(a + ".view.toggle.permission", "streamline.messaging.chats." + a + ".toggle");
+                String viewBasePermission = getResource().getOrSetDefault(a + ".view.permission", "streamline.messaging.chats." + a + ".view");
+                String viewTogglePermission = getResource().getOrSetDefault(a + ".view.toggle.permission", "streamline.messaging.chats." + a + ".toggle");
                 ViewingInfo viewingInfo = new ViewingInfo(viewBasePermission, viewTogglePermission);
 
                 ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, prefix, accessPermission, formattingPermission, message, viewingInfo);

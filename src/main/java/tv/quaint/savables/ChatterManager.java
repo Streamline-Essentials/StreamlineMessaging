@@ -1,19 +1,17 @@
 package tv.quaint.savables;
 
-import de.leonhard.storage.Config;
-import de.leonhard.storage.Json;
-import de.leonhard.storage.Toml;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.configs.*;
 import net.streamline.api.savables.SavableResource;
 import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
+import tv.quaint.storage.resources.StorageResource;
+import tv.quaint.storage.resources.flat.FlatFileResource;
+import tv.quaint.thebase.lib.leonhard.storage.Config;
+import tv.quaint.thebase.lib.leonhard.storage.Json;
+import tv.quaint.thebase.lib.leonhard.storage.Toml;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -61,11 +59,8 @@ public class ChatterManager {
             case TOML -> {
                 return new FlatFileResource<>(Toml.class, uuid + ".toml", StreamlineMessaging.getUsersFolder(), false);
             }
-            case MONGO -> {
-                return new MongoResource(StreamlineMessaging.getConfigs().getConfiguredDatabase(), clazz.getSimpleName(), "uuid", uuid);
-            }
-            case MYSQL -> {
-                return new MySQLResource(StreamlineMessaging.getConfigs().getConfiguredDatabase(), new SQLCollection(clazz.getSimpleName(), "uuid", uuid));
+            case MONGO, SQLITE, MYSQL -> {
+                return null;
             }
         }
 

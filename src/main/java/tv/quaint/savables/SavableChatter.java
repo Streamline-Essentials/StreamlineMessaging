@@ -2,13 +2,13 @@ package tv.quaint.savables;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.configs.StorageResource;
 import net.streamline.api.events.server.StreamlineChatEvent;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.savables.SavableResource;
 import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
+import tv.quaint.storage.resources.StorageResource;
 import tv.quaint.timers.FriendInviteExpiry;
 
 import java.util.*;
