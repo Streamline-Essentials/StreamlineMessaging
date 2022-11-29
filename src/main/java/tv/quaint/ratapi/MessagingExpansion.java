@@ -26,20 +26,14 @@ public class MessagingExpansion extends RATExpansion {
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("channel_") + "(.*?)", 1, (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
-            AtomicString string = new AtomicString(s.string());
-            s.handledString().isolateIn(s.string()).forEach(str -> {
-                string.set(startsWithChannel(str, chatter));
-            });
-            return string.get() == null ? s.string() : string.get();
+            String string = startsWithChannel(s.get(), chatter);
+            return string == null ? s.string() : string;
         }).register();
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("friends_with_") + "(.*?)", 1, (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
-            AtomicString string = new AtomicString(s.string());
-            s.handledString().isolateIn(s.string()).forEach(str -> {
-                string.set(startsWithFriendsWith(str, chatter));
-            });
-            return string.get() == null ? s.string() : string.get();
+            String string = startsWithFriendsWith(s.get(), chatter);
+            return string == null ? s.string() : string;
         }).register();
 
         new IdentifiedUserReplaceable(this, "friend_invites_enabled", (s, u) -> {
