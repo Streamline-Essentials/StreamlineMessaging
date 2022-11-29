@@ -20,9 +20,9 @@ public class MessagingExpansion extends RATExpansion {
 
     @Override
     public void init() {
-        new IdentifiedReplaceable(this, "loaded_chatters", (s) -> String.valueOf(ChatterManager.getLoadedChatters().size()));
-        new IdentifiedReplaceable(this, "loaded_channels", (s) -> String.valueOf(StreamlineMessaging.getChatChannelConfig().getChatChannels().size()));
-        new IdentifiedReplaceable(this, "default_channel", (s) -> StreamlineMessaging.getConfigs().defaultChat());
+        new IdentifiedReplaceable(this, "loaded_chatters", (s) -> String.valueOf(ChatterManager.getLoadedChatters().size())).register();
+        new IdentifiedReplaceable(this, "loaded_channels", (s) -> String.valueOf(StreamlineMessaging.getChatChannelConfig().getChatChannels().size())).register();
+        new IdentifiedReplaceable(this, "default_channel", (s) -> StreamlineMessaging.getConfigs().defaultChat()).register();
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("channel_") + "(.*?)", (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
@@ -31,7 +31,7 @@ public class MessagingExpansion extends RATExpansion {
                 string.set(startsWithChannel(str, chatter));
             });
             return string.get() == null ? s.string() : string.get();
-        });
+        }).register();
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("friends_with_") + "(.*?)", (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
@@ -40,7 +40,7 @@ public class MessagingExpansion extends RATExpansion {
                 string.set(startsWithFriendsWith(str, chatter));
             });
             return string.get() == null ? s.string() : string.get();
-        });
+        }).register();
 
         new IdentifiedUserReplaceable(this, "friend_invites_enabled", (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
@@ -48,7 +48,7 @@ public class MessagingExpansion extends RATExpansion {
             return chatter.isAcceptingFriendRequests() ?
                     MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
                     MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_FALSE.get();
-        });
+        }).register();
     }
 
     public String startsWithFriendsWith(String s, SavableChatter chatter) {

@@ -1,11 +1,8 @@
 package tv.quaint;
 
 import lombok.Getter;
-import net.streamline.api.command.ModuleCommand;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
-import net.streamline.api.modules.dependencies.Dependency;
-import net.streamline.api.placeholder.RATExpansion;
 import org.pf4j.PluginWrapper;
 import tv.quaint.commands.ChannelCommand;
 import tv.quaint.commands.FriendCommand;
@@ -66,12 +63,6 @@ public class StreamlineMessaging extends SimpleModule {
         instance = this;
         usersFolder = new File(getDataFolder(), "users" + File.separator);
         usersFolder.mkdirs();
-
-        RATExpansion expansion = ModuleUtils.getRATAPI().getExpansionByIdentifier("messaging");
-        while (expansion != null) {
-            ModuleUtils.getRATAPI().unregisterExpansion(expansion);
-            expansion = ModuleUtils.getRATAPI().getExpansionByIdentifier("messaging");
-        }
         messagingExpansion = new MessagingExpansion();
     }
 
@@ -85,7 +76,7 @@ public class StreamlineMessaging extends SimpleModule {
 
         mainListener = new MainListener();
         ModuleUtils.listen(mainListener, this);
-        getMessagingExpansion().register();
+        getMessagingExpansion().init();
     }
 
     @Override
@@ -96,6 +87,6 @@ public class StreamlineMessaging extends SimpleModule {
         });
         ChatterManager.setLoadedChatters(new ConcurrentSkipListMap<>());
 
-        getMessagingExpansion().unregister();
+        getMessagingExpansion().stop();
     }
 }

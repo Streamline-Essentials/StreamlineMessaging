@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Version : Bump.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" afterDir="false" />
     </list>
@@ -260,7 +259,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667287580742</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Version : Bump.">
+      <created>1669696750739</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1669696750739</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
