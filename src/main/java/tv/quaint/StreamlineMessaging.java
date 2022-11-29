@@ -98,9 +98,4 @@ public class StreamlineMessaging extends SimpleModule {
 
         getMessagingExpansion().unregister();
     }
-
-    @Override
-    public String getIdentifier() {
-        return identifier();
-    }
 }

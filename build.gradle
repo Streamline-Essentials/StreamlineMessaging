@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'tv.quaint'
-version '1.6-SNAPSHOT'
+version '1.8-SNAPSHOT'
 
 project.ext {
     def dir = layout.buildDirectory.dir('C:\\Users\\nitra\\Dropbox\\Streamline\\Project\\Streamline\\api\\build\\libs')
