@@ -24,7 +24,7 @@ public class MessagingExpansion extends RATExpansion {
         new IdentifiedReplaceable(this, "loaded_channels", (s) -> String.valueOf(StreamlineMessaging.getChatChannelConfig().getChatChannels().size())).register();
         new IdentifiedReplaceable(this, "default_channel", (s) -> StreamlineMessaging.getConfigs().defaultChat()).register();
 
-        new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("channel_") + "(.*?)", (s, u) -> {
+        new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("channel_") + "(.*?)", 1, (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
             AtomicString string = new AtomicString(s.string());
             s.handledString().isolateIn(s.string()).forEach(str -> {
@@ -33,7 +33,7 @@ public class MessagingExpansion extends RATExpansion {
             return string.get() == null ? s.string() : string.get();
         }).register();
 
-        new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("friends_with_") + "(.*?)", (s, u) -> {
+        new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("friends_with_") + "(.*?)", 1, (s, u) -> {
             SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
             AtomicString string = new AtomicString(s.string());
             s.handledString().isolateIn(s.string()).forEach(str -> {
