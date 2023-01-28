@@ -7,7 +7,7 @@
     <groupId>io.stream-lined</groupId>
     <artifactId>streamlinemessaging</artifactId>
     <version>1.9.0</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <name>StreamlineMessaging</name>
 
@@ -54,39 +54,48 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>${project.build.finalName}-${project.version}</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <attach>false</attach>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Plugin-Class>org.pf4j.demo.welcome.WelcomePlugin</Plugin-Class>
-                            <Plugin-Id>welcome-plugin</Plugin-Id>
-                            <Plugin-Version>0.0.1</Plugin-Version>
-                            <Plugin-Requires>1.0.0</Plugin-Requires>
-                            <Plugin-Dependencies>x, y, z</Plugin-Dependencies>
-                            <Plugin-Description>My example plugin</Plugin-Description>
-                            <Plugin-Provider>Decebal Suiu</Plugin-Provider>
-                            <Plugin-License>Apache License 2.0</Plugin-License>
-                        </manifestEntries>
-                    </archive>
+                    <filesets>
+                        <fileset>
+                            <directory>./compiled</directory>
+                            <includes>
+                                <include>**/*.*</include>
+                            </includes>
+                            <followSymlinks>true</followSymlinks>
+                        </fileset>
+                    </filesets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <finalName>${build.finalName}-${project.version}</finalName>
+                            <outputDirectory>./compiled</outputDirectory>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Plugin-Class>tv.quaint.StreamlineMessaging</Plugin-Class>
+                                        <Plugin-Id>streamline-messaging</Plugin-Id>
+                                        <Plugin-Version>${project.version}</Plugin-Version>
+                                        <Plugin-Requires></Plugin-Requires>
+                                        <Plugin-Dependencies></Plugin-Dependencies>
+                                        <Plugin-Description>Messaging Module for StreamlineCore.</Plugin-Description>
+                                        <Plugin-Provider>Quaint</Plugin-Provider>
+                                        <Plugin-License>Apache License 2.0</Plugin-License>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

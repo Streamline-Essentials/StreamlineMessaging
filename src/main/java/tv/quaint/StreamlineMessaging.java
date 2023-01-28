@@ -75,18 +75,6 @@ public class StreamlineMessaging extends SimpleModule {
         messages = new Messages();
         chatChannelConfig = new ChatChannelConfig();
 
-        switch (configs.getConfiguredDatabase().getType()) {
-            case MYSQL -> {
-                chatterDatabase = new MySQLChatterDatabase(configs.getConfiguredDatabase());
-            }
-            case SQLITE -> {
-                chatterDatabase = new SQLiteChatterDatabase(configs.getConfiguredDatabase());
-            }
-            case MONGO -> {
-                chatterDatabase = new MongoChatterDatabase(configs.getConfiguredDatabase());
-            }
-        }
-
         chatterSaver = new ChatterSaver();
 
         mainListener = new MainListener();

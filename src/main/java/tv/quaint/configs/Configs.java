@@ -13,8 +13,8 @@ public class Configs extends ModularizedConfig {
 
     @Override
     public void init() {
-        if (getResource().contains("chatters")) {
-            getResource().remove("chatters");
+        if (getResource().contains("chatters.saving.databases")) {
+            getResource().remove("chatters.saving.databases");
         }
 
         defaultChat();

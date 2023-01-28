@@ -34,6 +34,19 @@ messaging:
       # Updates the command's recipient's reply-to to the sender.
       recipient: true
 
+# Settings for chatters.
+chatters:
+  # Settings for saving chatters.
+  saving:
+    # The type of storage to use.
+    # Can be:
+    # YAML (Default) (Flat file)
+    # JSON (Flat file)
+    # TOML (Flat file)
+    # MONGO (NoSQL database)
+    # MYSQL (SQL database)
+    use: YAML
+
 # Configs for friends.
 friends:
   # Configs for friend invites.
