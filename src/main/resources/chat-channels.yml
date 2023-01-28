@@ -39,7 +39,7 @@ global:
       permission: "streamline.messaging.chats.global.toggle"
 local:
   type: LOCAL
-  prefix: "?"
+  prefix: "-"
   permissions:
     access: "streamline.messaging.chats.local.access"
     formatting: "streamline.messaging.chats.local.formatting"

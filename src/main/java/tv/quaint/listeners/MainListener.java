@@ -29,7 +29,10 @@ public class MainListener implements BaseEventListener {
             chatChannel.sendMessageAs(event.getSender(), message);
             handled.set(true);
         });
-        if (handled.get()) return;
+        if (handled.get()) {
+            event.setCanceled(true);
+            return;
+        }
 
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUuid());
         event.setCanceled(chatter.onChannelMessage(event));
@@ -38,6 +41,7 @@ public class MainListener implements BaseEventListener {
     @BaseProcessor
     public void onJoin(LoginEvent event) {
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUuid());
+        ChatterManager.getChatterFromDatabase(chatter);
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {
             ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(StreamlineMessaging.getConfigs().defaultChat());

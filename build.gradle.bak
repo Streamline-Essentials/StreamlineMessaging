@@ -7,13 +7,13 @@ plugins {
 }
 
 group 'tv.quaint'
-version '1.8-SNAPSHOT'
+version '1.9'
 
 project.ext {
-    def dir = layout.buildDirectory.dir('C:\\Users\\nitra\\Dropbox\\Streamline\\Project\\Streamline\\api\\build\\libs')
-    File[] files = dir.get().getAsFile().listFiles();
-    File dependFile = files[0]
-    fileLocation = dependFile.toPath().toString();
+    def dir_api = layout.buildDirectory.dir('C:\\Users\\nitra\\Dropbox\\Streamline\\Project\\Streamline\\api\\target')
+    File[] files_api = dir_api.get().getAsFile().listFiles()
+    File dependFile_api = files_api[0]
+    fileLocation_api = dependFile_api.toPath().toString()
 }
 
 repositories {
@@ -24,8 +24,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly "net.luckperms:api:5.4"
-    compileOnly files("${fileLocation}")
-    annotationProcessor files("${fileLocation}")
+    compileOnly files("${fileLocation_api}")
+    annotationProcessor files("${fileLocation_api}")
 }
 
 java {

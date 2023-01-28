@@ -1,19 +1,19 @@
 package tv.quaint;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
-import org.pf4j.PluginWrapper;
 import tv.quaint.commands.ChannelCommand;
 import tv.quaint.commands.FriendCommand;
 import tv.quaint.commands.MessageCommand;
 import tv.quaint.commands.ReplyCommand;
-import tv.quaint.configs.ChatChannelConfig;
-import tv.quaint.configs.Configs;
-import tv.quaint.configs.Messages;
+import tv.quaint.configs.*;
 import tv.quaint.listeners.MainListener;
 import tv.quaint.ratapi.MessagingExpansion;
 import tv.quaint.savables.ChatterManager;
+import tv.quaint.storage.resources.databases.DatabaseResource;
+import tv.quaint.thebase.lib.pf4j.PluginWrapper;
 import tv.quaint.timers.ChatterSaver;
 
 import java.io.File;
@@ -44,6 +44,9 @@ public class StreamlineMessaging extends SimpleModule {
     @Getter
     static MessagingExpansion messagingExpansion;
 
+    @Getter @Setter
+    static DatabaseResource<?> chatterDatabase;
+
     public StreamlineMessaging(PluginWrapper wrapper) {
         super(wrapper);
     }
@@ -71,6 +74,18 @@ public class StreamlineMessaging extends SimpleModule {
         configs = new Configs();
         messages = new Messages();
         chatChannelConfig = new ChatChannelConfig();
+
+        switch (configs.getConfiguredDatabase().getType()) {
+            case MYSQL -> {
+                chatterDatabase = new MySQLChatterDatabase(configs.getConfiguredDatabase());
+            }
+            case SQLITE -> {
+                chatterDatabase = new SQLiteChatterDatabase(configs.getConfiguredDatabase());
+            }
+            case MONGO -> {
+                chatterDatabase = new MongoChatterDatabase(configs.getConfiguredDatabase());
+            }
+        }
 
         chatterSaver = new ChatterSaver();
 

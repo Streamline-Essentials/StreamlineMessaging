@@ -13,6 +13,10 @@ public class Configs extends ModularizedConfig {
 
     @Override
     public void init() {
+        if (getResource().contains("chatters")) {
+            getResource().remove("chatters");
+        }
+
         defaultChat();
         forceDefaultAlways();
         forceDefaultOnJoin();
@@ -107,41 +111,10 @@ public class Configs extends ModularizedConfig {
     ===========================================================================
      */
 
-
     public StorageUtils.SupportedStorageType savingUse() {
         reloadResource();
 
         return StorageUtils.SupportedStorageType.valueOf(getResource().getOrSetDefault("chatters.saving.use", StorageUtils.SupportedStorageType.YAML.toString()));
-    }
-
-    public DatabaseConfig getConfiguredDatabase() {
-        FlatFileSection section = getResource().getSection("chatters.saving.database");
-
-        StorageUtils.SupportedDatabaseType type = StorageUtils.SupportedDatabaseType.valueOf(section.getOrSetDefault("type", StorageUtils.SupportedDatabaseType.SQLITE.toString()));
-        String link;
-        switch (type) {
-            case MONGO:
-                link = section.getOrDefault("link", "mongodb://{{user}}:{{pass}}@{{host}}:{{port}}/{{database}}");
-                break;
-            case MYSQL:
-                link = section.getOrDefault("link", "jdbc:mysql://{{host}}:{{port}}/{{database}}{{options}}");
-                break;
-            case SQLITE:
-                link = section.getOrDefault("link", "jdbc:sqlite:{{database}}.db");
-                break;
-            default:
-                link = section.getOrSetDefault("link", "jdbc:sqlite:{{database}}.db");
-                break;
-        }
-        String host = section.getOrSetDefault("host", "localhost");
-        int port = section.getOrSetDefault("port", 3306);
-        String username = section.getOrSetDefault("username", "user");
-        String password = section.getOrSetDefault("password", "pass1234");
-        String database = section.getOrSetDefault("database", "streamline");
-        String tablePrefix = section.getOrSetDefault("table-prefix", "sl_");
-        String options = section.getOrSetDefault("options", "?useSSL=false&serverTimezone=UTC");
-
-        return new DatabaseConfig(type, link, host, port, username, password, database, tablePrefix, options);
     }
 
     // FRIENDS
