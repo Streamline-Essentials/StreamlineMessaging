@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
+import net.streamline.api.utils.UserUtils;
 import tv.quaint.commands.ChannelCommand;
 import tv.quaint.commands.FriendCommand;
 import tv.quaint.commands.MessageCommand;
@@ -80,6 +81,8 @@ public class StreamlineMessaging extends SimpleModule {
         mainListener = new MainListener();
         ModuleUtils.listen(mainListener, this);
         getMessagingExpansion().init();
+
+        ChatterManager.getOrGetChatter(UserUtils.getConsole());
     }
 
     @Override
@@ -87,6 +90,7 @@ public class StreamlineMessaging extends SimpleModule {
         ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> {
             savableChatter.saveAll();
             savableChatter.getStorageResource().push();
+            ChatterManager.syncChatter(savableChatter);
         });
         ChatterManager.setLoadedChatters(new ConcurrentSkipListMap<>());
 

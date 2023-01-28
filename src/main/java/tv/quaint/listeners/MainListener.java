@@ -1,5 +1,6 @@
 package tv.quaint.listeners;
 
+import net.streamline.api.events.server.LoginCompletedEvent;
 import net.streamline.api.events.server.LoginEvent;
 import net.streamline.api.events.server.StreamlineChatEvent;
 import tv.quaint.StreamlineMessaging;
@@ -13,6 +14,9 @@ import tv.quaint.savables.SavableChatter;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainListener implements BaseEventListener {
+    public MainListener() {
+    }
+
     @BaseProcessor(priority = BaseEventPriority.LOWEST)
     public void onChat(StreamlineChatEvent event) {
         if (event.isCanceled()) return;
@@ -39,7 +43,7 @@ public class MainListener implements BaseEventListener {
     }
 
     @BaseProcessor
-    public void onJoin(LoginEvent event) {
+    public void onJoin(LoginCompletedEvent event) {
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUuid());
         ChatterManager.getChatterFromDatabase(chatter);
 

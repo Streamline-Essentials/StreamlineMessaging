@@ -30,6 +30,7 @@ public class ChatterManager {
 
     public static void loadChatter(SavableChatter chatter) {
         loadedChatters.put(chatter.getUuid(), chatter);
+        syncChatter(chatter);
     }
 
     public static void unloadChatter(SavableChatter chatter) {
@@ -50,6 +51,7 @@ public class ChatterManager {
 
         chatter = new SavableChatter(uuid);
         loadChatter(chatter);
+        getChatterFromDatabase(chatter);
         return chatter;
     }
 
