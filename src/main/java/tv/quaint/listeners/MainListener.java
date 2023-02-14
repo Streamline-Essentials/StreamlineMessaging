@@ -23,12 +23,12 @@ public class MainListener implements BaseEventListener {
 
         AtomicBoolean handled = new AtomicBoolean(false);
         StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((s, chatChannel) -> {
-            if (chatChannel.identifier().equals("none")) return;
+            if (chatChannel.getIdentifier().equals("none")) return;
             if (handled.get()) return;
-            if (chatChannel.prefix().equals("")) return;
-            if (! event.getMessage().startsWith(chatChannel.prefix())) return;
+            if (chatChannel.getPrefix().equals("")) return;
+            if (! event.getMessage().startsWith(chatChannel.getPrefix())) return;
 
-            String message = event.getMessage().substring(chatChannel.prefix().length());
+            String message = event.getMessage().substring(chatChannel.getPrefix().length());
 
             chatChannel.sendMessageAs(event.getSender(), message);
             handled.set(true);

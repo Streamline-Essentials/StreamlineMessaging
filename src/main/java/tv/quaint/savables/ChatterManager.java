@@ -12,7 +12,9 @@ import tv.quaint.storage.StorageUtils;
 import tv.quaint.storage.resources.StorageResource;
 import tv.quaint.storage.resources.cache.CachedResource;
 import tv.quaint.storage.resources.cache.CachedResourceUtils;
+import tv.quaint.storage.resources.databases.DatabaseResource;
 import tv.quaint.storage.resources.databases.configurations.DatabaseConfig;
+import tv.quaint.storage.resources.databases.processing.DatabaseValue;
 import tv.quaint.storage.resources.flat.FlatFileResource;
 import tv.quaint.thebase.lib.leonhard.storage.Config;
 import tv.quaint.thebase.lib.leonhard.storage.Json;
@@ -60,16 +62,24 @@ public class ChatterManager {
     }
 
     public static void getChatterFromDatabase(SavableChatter chatter) {
+        StorageUtils.SupportedStorageType type = StreamlineMessaging.getConfigs().savingUse();
+        if (type == StorageUtils.SupportedStorageType.YAML || type == StorageUtils.SupportedStorageType.JSON || type == StorageUtils.SupportedStorageType.TOML) return;
+
         CachedResource<?> cachedResource = (CachedResource<?>) chatter.getStorageResource();
         String tableName = SLAPI.getMainDatabase().getConfig().getTablePrefix() + "chatters";
 
         try {
             boolean changed = false;
             switch (GivenConfigs.getMainConfig().savingUseType()) {
-                case MYSQL, SQLITE, MONGO -> {
+                case MONGO:
+                case SQLITE:
+                case MYSQL:
+                    if (! SLAPI.getMainDatabase().exists(tableName)) {
+                        return;
+                    }
                     CachedResourceUtils.updateCache(tableName, cachedResource.getDiscriminatorKey(), cachedResource.getDiscriminatorAsString(), cachedResource, SLAPI.getMainDatabase());
                     changed = true;
-                }
+                    break;
             }
             if (changed) chatter.loadValues();
         } catch (Exception e) {
@@ -95,12 +105,14 @@ public class ChatterManager {
     }
 
     public static void syncChatter(SavableChatter chatter) {
-        switch (GivenConfigs.getMainConfig().savingUseType()) {
-            case MONGO, MYSQL, SQLITE -> {
+        switch (StreamlineMessaging.getConfigs().savingUse()) {
+            case MONGO:
+            case SQLITE:
+            case MYSQL:
                 CachedResource<?> cachedResource = (CachedResource<?>) chatter.getStorageResource();
-                String tableName = SLAPI.getMainDatabase().getConfig().getTablePrefix() + "chatter";
+                String tableName = SLAPI.getMainDatabase().getConfig().getTablePrefix() + "chatters";
                 CachedResourceUtils.pushToDatabase(tableName, cachedResource, SLAPI.getMainDatabase());
-            }
+                break;
         }
     }
 
@@ -114,7 +126,7 @@ public class ChatterManager {
     }
 
     public static boolean userExists(String uuid) {
-        StorageUtils.SupportedStorageType type = GivenConfigs.getMainConfig().savingUseType();
+        StorageUtils.SupportedStorageType type = StreamlineMessaging.getConfigs().savingUse();
         DatabaseConfig config = GivenConfigs.getMainConfig().getConfiguredDatabase();
         File userFolder = SLAPI.getUserFolder();
         switch (type) {

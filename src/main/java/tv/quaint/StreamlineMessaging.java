@@ -16,6 +16,7 @@ import tv.quaint.savables.ChatterManager;
 import tv.quaint.storage.resources.databases.DatabaseResource;
 import tv.quaint.thebase.lib.pf4j.PluginWrapper;
 import tv.quaint.timers.ChatterSaver;
+import tv.quaint.timers.ChatterSyncer;
 
 import java.io.File;
 import java.util.Collections;
@@ -81,6 +82,8 @@ public class StreamlineMessaging extends SimpleModule {
         mainListener = new MainListener();
         ModuleUtils.listen(mainListener, this);
         getMessagingExpansion().init();
+
+        new ChatterSyncer();
 
         ChatterManager.getOrGetChatter(UserUtils.getConsole());
     }

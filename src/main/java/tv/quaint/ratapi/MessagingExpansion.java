@@ -56,19 +56,19 @@ public class MessagingExpansion extends RATExpansion {
         ConfiguredChatChannel channel = chatter.getCurrentChatChannel();
         if (channel == null) return null;
         if (s.equals("channel_identifier")) {
-            return channel.identifier();
+            return channel.getIdentifier();
         }
         if (s.equals("channel_type")) {
-            return channel.type().toString();
+            return channel.getType().toString();
         }
         if (s.equals("channel_permission_access")) {
-            return channel.accessPermission();
+            return channel.getAccessPermission();
         }
         if (s.equals("channel_permission_formatting")) {
-            return channel.formattingPermission();
+            return channel.getFormattingPermission();
         }
         if (s.equals("channel_message")) {
-            return channel.message();
+            return channel.getMessage();
         }
         return null;
     }

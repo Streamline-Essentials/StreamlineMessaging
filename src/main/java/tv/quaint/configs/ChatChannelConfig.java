@@ -33,7 +33,7 @@ public class ChatChannelConfig extends ModularizedConfig {
                 ViewingInfo viewingInfo = new ViewingInfo(viewBasePermission, viewTogglePermission);
 
                 ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, prefix, accessPermission, formattingPermission, message, viewingInfo);
-                r.put(channel.identifier(), channel);
+                r.put(channel.getIdentifier(), channel);
             } catch (Exception e) {
                 StreamlineMessaging.getInstance().logWarning("Could not load chat channel with identifier '" + a + "' due to: " + e.getMessage());
             }

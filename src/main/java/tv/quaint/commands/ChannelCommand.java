@@ -47,7 +47,7 @@ public class ChannelCommand extends ModuleCommand {
         ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(identifier);
         chatter.setCurrentChatChannel(channel);
 
-        if (chatter.getCurrentChatChannel().identifier().equals(identifier)) {
+        if (chatter.getCurrentChatChannel().getIdentifier().equals(identifier)) {
             ModuleUtils.sendMessage(streamlineUser, messageResultSuccess
                     .replace("%this_identifier%", identifier)
             );
@@ -64,7 +64,7 @@ public class ChannelCommand extends ModuleCommand {
             ConcurrentSkipListSet<String> r = new ConcurrentSkipListSet<>();
 
             StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((a, b) -> {
-                if (ModuleUtils.hasPermission(StreamlineUser, b.accessPermission())) r.add(a);
+                if (ModuleUtils.hasPermission(StreamlineUser, b.getAccessPermission())) r.add(a);
             });
 
             return r;
