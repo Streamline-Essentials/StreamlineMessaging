@@ -62,6 +62,8 @@ public class ChatterManager {
     }
 
     public static void getChatterFromDatabase(SavableChatter chatter) {
+        if (GivenConfigs.getMainDatabase() == null) return;
+
         StorageUtils.SupportedStorageType type = StreamlineMessaging.getConfigs().savingUse();
         if (type == StorageUtils.SupportedStorageType.YAML || type == StorageUtils.SupportedStorageType.JSON || type == StorageUtils.SupportedStorageType.TOML) return;
 
@@ -92,11 +94,15 @@ public class ChatterManager {
     }
 
     public static void getChatterFromDatabase(String uuid) {
+        if (GivenConfigs.getMainDatabase() == null) return;
+
         if (! isLoaded(uuid)) return;
         getChatterFromDatabase(getChatter(uuid));
     }
 
     public static void getAllUsersFromDatabase() {
+        if (GivenConfigs.getMainDatabase() == null) return;
+
         getLoadedChattersSet().forEach(ChatterManager::getChatterFromDatabase);
     }
 
@@ -105,6 +111,8 @@ public class ChatterManager {
     }
 
     public static void syncChatter(SavableChatter chatter) {
+        if (GivenConfigs.getMainDatabase() == null) return;
+
         switch (StreamlineMessaging.getConfigs().savingUse()) {
             case MONGO:
             case SQLITE:
@@ -117,6 +125,8 @@ public class ChatterManager {
     }
 
     public static void syncChatter(String uuid) {
+        if (GivenConfigs.getMainDatabase() == null) return;
+
         if (! isLoaded(uuid)) return;
         syncChatter(getChatter(uuid));
     }
@@ -127,7 +137,6 @@ public class ChatterManager {
 
     public static boolean userExists(String uuid) {
         StorageUtils.SupportedStorageType type = StreamlineMessaging.getConfigs().savingUse();
-        DatabaseConfig config = GivenConfigs.getMainConfig().getConfiguredDatabase();
         File userFolder = SLAPI.getUserFolder();
         switch (type) {
             case YAML:

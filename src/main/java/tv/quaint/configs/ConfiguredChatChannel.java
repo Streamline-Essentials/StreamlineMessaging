@@ -52,11 +52,14 @@ public class ConfiguredChatChannel implements Comparable<ConfiguredChatChannel> 
             ModuleUtils.chatAs(user, message);
             return;
         }
+        if (! ModuleUtils.hasPermission(user, getAccessPermission())) return;
 
         switch (getType()) {
             case ROOM:
                 ChatterManager.getChattersViewingChannel(this).forEach(a -> {
-                    ModuleUtils.sendMessage(a.asUser(), user, getMessage().replace("%this_message%", message));
+                    if (! ModuleUtils.hasPermission(a.asUser(), getFormattingPermission())) {
+                        ModuleUtils.sendMessage(a.asUser(), user, getMessage().replace("%this_message%", message));
+                    }
                 });
                 break;
             case LOCAL:

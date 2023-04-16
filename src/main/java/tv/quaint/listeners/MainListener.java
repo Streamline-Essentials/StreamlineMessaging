@@ -3,6 +3,7 @@ package tv.quaint.listeners;
 import net.streamline.api.events.server.LoginCompletedEvent;
 import net.streamline.api.events.server.LoginEvent;
 import net.streamline.api.events.server.StreamlineChatEvent;
+import net.streamline.api.modules.ModuleUtils;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.events.BaseEventListener;
@@ -23,6 +24,7 @@ public class MainListener implements BaseEventListener {
 
         AtomicBoolean handled = new AtomicBoolean(false);
         StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((s, chatChannel) -> {
+            if (! ModuleUtils.hasPermission(event.getSender(), chatChannel.getAccessPermission())) return;
             if (chatChannel.getIdentifier().equals("none")) return;
             if (handled.get()) return;
             if (chatChannel.getPrefix().equals("")) return;
@@ -45,7 +47,7 @@ public class MainListener implements BaseEventListener {
     @BaseProcessor
     public void onJoin(LoginCompletedEvent event) {
         SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUuid());
-        ChatterManager.getChatterFromDatabase(chatter);
+//        ChatterManager.getChatterFromDatabase(chatter);
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {
             ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(StreamlineMessaging.getConfigs().defaultChat());

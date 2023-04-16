@@ -4,21 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fixed.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Java 11">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/MongoChatterDatabase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/MySQLChatterDatabase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/SQLiteChatterDatabase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ViewingInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ViewingInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/ChatterManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/ChatterManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" afterDir="false" />
     </list>
@@ -78,22 +68,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/nitra/Dropbox/Streamline/Project/Streamline Modules/ResourcePackUtils&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/nitra/Dropbox/Streamline/Project/Streamline Modules/ResourcePackUtils",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="tv.quaint.configs" />
@@ -101,6 +92,19 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="StreamlineMessaging" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="StreamlineMessaging" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="streamlinemessaging [clean,package]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
@@ -143,7 +147,14 @@
       <workItem from="1675849403916" duration="38000" />
       <workItem from="1675907115574" duration="6250000" />
       <workItem from="1676358392527" duration="756000" />
-      <workItem from="1676359178345" duration="320000" />
+      <workItem from="1676359178345" duration="1112000" />
+      <workItem from="1676602930104" duration="2818000" />
+      <workItem from="1677329708546" duration="3807000" />
+      <workItem from="1678219911447" duration="511000" />
+      <workItem from="1678520646268" duration="610000" />
+      <workItem from="1679532769913" duration="2379000" />
+      <workItem from="1681272797331" duration="3165000" />
+      <workItem from="1681594394821" duration="2668000" />
     </task>
     <task id="LOCAL-00001" summary="Update : 1.0">
       <created>1658559624570</created>
@@ -355,7 +366,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674893479753</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Java 11">
+      <created>1676359693478</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1676359693478</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,6 +414,7 @@
     <MESSAGE value="API Update." />
     <MESSAGE value="Stuffs." />
     <MESSAGE value="Fixed." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed." />
+    <MESSAGE value="Java 11" />
+    <option name="LAST_COMMIT_MESSAGE" value="Java 11" />
   </component>
 </project>

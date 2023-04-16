@@ -9,6 +9,7 @@ import net.streamline.api.savables.users.StreamlineUser;
 import tv.quaint.StreamlineMessaging;
 import tv.quaint.configs.ConfiguredChatChannel;
 import tv.quaint.storage.resources.StorageResource;
+import tv.quaint.storage.resources.flat.FlatFileResource;
 import tv.quaint.timers.FriendInviteExpiry;
 import tv.quaint.utils.StringUtils;
 
@@ -113,8 +114,22 @@ public class SavableChatter extends SavableResource {
 
     public List<String> getStringListFromResource(String key, List<String> def){
         String defString = StringUtils.listToString(def, ",");
-        String s = getStorageResource().getOrSetDefault(key, defString);
-        return StringUtils.stringToList(s, ",");
+        try {
+            String s = getStorageResource().getOrSetDefault(key, defString);
+            return StringUtils.stringToList(s, ",");
+        } catch (ClassCastException e) {
+            try {
+                return getStorageResource().getOrSetDefault(key, def);
+            } catch (ClassCastException error) {
+                if (getStorageResource() instanceof FlatFileResource<?>) {
+                    FlatFileResource<?> flatFileResource = (FlatFileResource<?>) getStorageResource();
+
+                    flatFileResource.getResource().remove(key);
+                }
+                getStorageResource().write(key, defString);
+                return StringUtils.stringToList(defString, ",");
+            }
+        }
     }
 
     public ConcurrentSkipListMap<Date, String> getFriendMapFromResource(String key, ConcurrentSkipListMap<Long, String> def){
