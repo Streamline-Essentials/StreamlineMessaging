@@ -55,19 +55,19 @@ public class MessagingExpansion extends RATExpansion {
     public String startsWithChannel(String s, SavableChatter chatter) {
         ConfiguredChatChannel channel = chatter.getCurrentChatChannel();
         if (channel == null) return null;
-        if (s.equals("channel_identifier")) {
+        if (s.equals("identifier")) {
             return channel.getIdentifier();
         }
-        if (s.equals("channel_type")) {
+        if (s.equals("type")) {
             return channel.getType().toString();
         }
-        if (s.equals("channel_permission_access")) {
+        if (s.equals("permission_access")) {
             return channel.getAccessPermission();
         }
-        if (s.equals("channel_permission_formatting")) {
+        if (s.equals("permission_formatting")) {
             return channel.getFormattingPermission();
         }
-        if (s.equals("channel_message")) {
+        if (s.equals("message")) {
             return channel.getMessage();
         }
         return null;

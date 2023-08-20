@@ -1,7 +1,6 @@
 package tv.quaint.listeners;
 
 import net.streamline.api.events.server.LoginCompletedEvent;
-import net.streamline.api.events.server.LoginEvent;
 import net.streamline.api.events.server.StreamlineChatEvent;
 import net.streamline.api.modules.ModuleUtils;
 import tv.quaint.StreamlineMessaging;

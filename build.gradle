@@ -1,0 +1,74 @@
+plugins {
+    id("java")
+    id("net.kyori.blossom") version "1.3.1"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'net.kyori.blossom'
+
+group 'com.github.streamline-essentials'
+version '1.9.5'
+
+ext {
+    String version = "45ec19a841"
+
+    File folder = new File("libs");
+    folder.mkdirs();
+    apibFile = new File(folder, "StreamlineCore-API-" + version + ".jar")
+
+    URL url = new URL("https://jitpack.io/com/github/Streamline-Essentials/StreamlineCore/StreamlineCore-API/" + version + "/StreamlineCore-API-" + version + ".jar")
+    BufferedInputStream bis = new BufferedInputStream(url.openStream())
+    FileOutputStream fis = new FileOutputStream(apibFile);
+
+    byte[] buffer = new byte[1024];
+    int count=0;
+
+    while((count = bis.read(buffer,0,1024)) != -1)
+    {
+        fis.write(buffer, 0, count);
+    }
+
+    fis.close();
+    bis.close();
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly "net.luckperms:api:5.4"
+
+    compileOnly(files(apibFile.getPath()))
+    annotationProcessor(files(apibFile.getPath()))
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+shadowJar {
+    manifest {
+        attributes 'Plugin-Class': 'tv.quaint.StreamlineMessaging'
+        attributes 'Plugin-Id': 'streamline-messaging'
+        attributes 'Plugin-Version': version
+        attributes 'Plugin-Requires': ''
+        attributes 'Plugin-Dependencies': ''
+        attributes 'Plugin-Description': 'Messaging Module for StreamlineCore.'
+        attributes 'Plugin-Provider': 'Quaint'
+        attributes 'Plugin-License': 'Apache License 2.0'
+    }
+
+//    archiveFileName = "$archiveBaseName-$archiveVersion.$archiveExtension"
+    archiveName = "$baseName-$version.$extension"
+}
+
+artifacts {
+    archives shadowJar
+}

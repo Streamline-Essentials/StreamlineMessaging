@@ -16,10 +16,10 @@ import tv.quaint.storage.resources.databases.DatabaseResource;
 import tv.quaint.storage.resources.databases.configurations.DatabaseConfig;
 import tv.quaint.storage.resources.databases.processing.DatabaseValue;
 import tv.quaint.storage.resources.flat.FlatFileResource;
-import tv.quaint.thebase.lib.leonhard.storage.Config;
-import tv.quaint.thebase.lib.leonhard.storage.Json;
-import tv.quaint.thebase.lib.leonhard.storage.Toml;
-import tv.quaint.thebase.lib.mongodb.MongoClient;
+import net.streamline.thebase.lib.leonhard.storage.Config;
+import net.streamline.thebase.lib.leonhard.storage.Json;
+import net.streamline.thebase.lib.leonhard.storage.Toml;
+import net.streamline.thebase.lib.mongodb.MongoClient;
 
 import java.io.File;
 import java.sql.Connection;

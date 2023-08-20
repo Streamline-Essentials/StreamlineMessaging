@@ -409,7 +409,7 @@ public class SavableChatter extends SavableResource {
     }
 
     public boolean hasViewingPermission(ConfiguredChatChannel channel) {
-        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.getUuid()), (channel.getViewingInfo().getPermission()));
+        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.getUuid()), channel.getViewingInfo().getPermission());
     }
 
     public boolean canMessageMeFrom(ConfiguredChatChannel channel) {
@@ -478,10 +478,10 @@ public class SavableChatter extends SavableResource {
         return chatter.isMyFriend(this.getUuid());
     }
 
-    public TreeMap<Integer, String> getFriendsListPaged() {
+    public ConcurrentSkipListMap<Integer, String> getFriendsListPaged() {
         double times = Math.ceil(getFriends().size() / ((double) StreamlineMessaging.getMessages().friendsListMaxPerPage()));
 
-        TreeMap<Integer, String> r = new TreeMap<>();
+        ConcurrentSkipListMap<Integer, String> r = new ConcurrentSkipListMap<>();
 
         for (int i = 0; i < times; i ++) {
             r.put(i, getFriendsListFrom(i * 5));
@@ -594,10 +594,10 @@ public class SavableChatter extends SavableResource {
         return chatter.isMyBestFriend(this.getUuid());
     }
 
-    public TreeMap<Integer, String> getBestFriendsListPaged() {
+    public ConcurrentSkipListMap<Integer, String> getBestFriendsListPaged() {
         double times = Math.ceil(getBestFriends().size() / ((double) StreamlineMessaging.getMessages().bestFriendsListMaxPerPage()));
 
-        TreeMap<Integer, String> r = new TreeMap<>();
+        ConcurrentSkipListMap<Integer, String> r = new ConcurrentSkipListMap<>();
 
         for (int i = 0; i < times; i ++) {
             r.put(i, getBestFriendsListFrom(i * 5));

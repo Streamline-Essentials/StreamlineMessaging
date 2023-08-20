@@ -14,7 +14,7 @@ import tv.quaint.listeners.MainListener;
 import tv.quaint.ratapi.MessagingExpansion;
 import tv.quaint.savables.ChatterManager;
 import tv.quaint.storage.resources.databases.DatabaseResource;
-import tv.quaint.thebase.lib.pf4j.PluginWrapper;
+import net.streamline.thebase.lib.pf4j.PluginWrapper;
 import tv.quaint.timers.ChatterSaver;
 import tv.quaint.timers.ChatterSyncer;
 

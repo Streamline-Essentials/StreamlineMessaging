@@ -1,24 +1,36 @@
 package tv.quaint.configs;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.streamline.api.configs.ModularizedConfig;
 import tv.quaint.StreamlineMessaging;
 
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class ChatChannelConfig extends ModularizedConfig {
+    @Getter @Setter
+    private ConcurrentSkipListMap<String, ConfiguredChatChannel> chatChannels;
+
     public ChatChannelConfig() {
         super(StreamlineMessaging.getInstance(), "chat-channels.yml", true);
     }
 
     @Override
     public void init() {
-
+        chatChannels = getChatChannelsFromConfig();
+        chatChannels.forEach(((s, channel) -> channel.setupCommand()));
     }
 
-    public TreeMap<String, ConfiguredChatChannel> getChatChannels() {
-        reloadResource();
+    @Override
+    public void reloadResource(boolean force) {
+        super.reloadResource(force);
 
-        TreeMap<String, ConfiguredChatChannel> r = new TreeMap<>();
+        chatChannels = getChatChannelsFromConfig();
+        chatChannels.forEach(((s, channel) -> channel.setupCommand()));
+    }
+
+    public ConcurrentSkipListMap<String, ConfiguredChatChannel> getChatChannelsFromConfig() {
+        ConcurrentSkipListMap<String, ConfiguredChatChannel> r = new ConcurrentSkipListMap<>();
 
         getResource().singleLayerKeySet().forEach(a -> {
             try {
@@ -31,8 +43,9 @@ public class ChatChannelConfig extends ModularizedConfig {
                 String viewBasePermission = getResource().getOrSetDefault(a + ".view.permission", "streamline.messaging.chats." + a + ".view");
                 String viewTogglePermission = getResource().getOrSetDefault(a + ".view.toggle.permission", "streamline.messaging.chats." + a + ".toggle");
                 ViewingInfo viewingInfo = new ViewingInfo(viewBasePermission, viewTogglePermission);
+                String commandBase = getResource().getOrSetDefault(a + ".command-base", a);
 
-                ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, prefix, accessPermission, formattingPermission, message, viewingInfo);
+                ConfiguredChatChannel channel = new ConfiguredChatChannel(a, t, prefix, accessPermission, formattingPermission, message, viewingInfo, commandBase);
                 r.put(channel.getIdentifier(), channel);
             } catch (Exception e) {
                 StreamlineMessaging.getInstance().logWarning("Could not load chat channel with identifier '" + a + "' due to: " + e.getMessage());
@@ -40,8 +53,12 @@ public class ChatChannelConfig extends ModularizedConfig {
         });
 
         r.remove("none");
-        r.put("none", new ConfiguredChatChannel("none", ConfiguredChatChannel.Type.LOCAL, "-", "", "", "", new ViewingInfo("", "")));
+        r.put("none", new ConfiguredChatChannel("none", ConfiguredChatChannel.Type.LOCAL, "-", "", "", "", new ViewingInfo("", ""), "chat-none"));
 
         return r;
+    }
+
+    public ConfiguredChatChannel getChatChannel(String identifier) {
+        return getChatChannels().get(identifier);
     }
 }

@@ -32,29 +32,44 @@ public class ChannelCommand extends ModuleCommand {
 
     @Override
     public void run(StreamlineUser streamlineUser, String[] strings) {
-        String identifier;
-        if (strings[0].equals("")) {
-            identifier = "none";
-        } else if (strings.length > 1) {
-            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
-            return;
-        } else {
-            identifier = strings[0];
-        }
+        try {
+            String identifier;
+            if (strings[0].equals("")) {
+                identifier = "none";
+            } else if (strings.length > 1) {
+                ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+                return;
+            } else {
+                identifier = strings[0];
+            }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
+            SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
+            if (chatter == null) {
+                ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+                return;
+            }
 
-        ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(identifier);
-        chatter.setCurrentChatChannel(channel);
+            ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannel(identifier);
+            if (channel == null) {
+                ModuleUtils.sendMessage(streamlineUser, messageResultFailure
+                        .replace("%this_identifier%", identifier));
+                return;
+            }
 
-        if (chatter.getCurrentChatChannel().getIdentifier().equals(identifier)) {
-            ModuleUtils.sendMessage(streamlineUser, messageResultSuccess
-                    .replace("%this_identifier%", identifier)
-            );
-        } else {
-            ModuleUtils.sendMessage(streamlineUser, messageResultFailure
-                    .replace("%this_identifier%", identifier)
-            );
+            chatter.setCurrentChatChannel(channel);
+
+            if (chatter.getCurrentChatChannel().getIdentifier().equals(identifier)) {
+                ModuleUtils.sendMessage(streamlineUser, messageResultSuccess
+                        .replace("%this_identifier%", identifier)
+                );
+            } else {
+                ModuleUtils.sendMessage(streamlineUser, messageResultFailure
+                        .replace("%this_identifier%", identifier)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            streamlineUser.sendMessage(MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TYPE_DEFAULT.get());
         }
     }
 
