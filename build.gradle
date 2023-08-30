@@ -9,30 +9,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.kyori.blossom'
 
 group 'com.github.streamline-essentials'
-version '1.9.5'
-
-ext {
-    String version = "45ec19a841"
-
-    File folder = new File("libs");
-    folder.mkdirs();
-    apibFile = new File(folder, "StreamlineCore-API-" + version + ".jar")
-
-    URL url = new URL("https://jitpack.io/com/github/Streamline-Essentials/StreamlineCore/StreamlineCore-API/" + version + "/StreamlineCore-API-" + version + ".jar")
-    BufferedInputStream bis = new BufferedInputStream(url.openStream())
-    FileOutputStream fis = new FileOutputStream(apibFile);
-
-    byte[] buffer = new byte[1024];
-    int count=0;
-
-    while((count = bis.read(buffer,0,1024)) != -1)
-    {
-        fis.write(buffer, 0, count);
-    }
-
-    fis.close();
-    bis.close();
-}
+version '1.9.6'
 
 repositories {
     mavenCentral()
@@ -44,8 +21,8 @@ repositories {
 dependencies {
     compileOnly "net.luckperms:api:5.4"
 
-    compileOnly(files(apibFile.getPath()))
-    annotationProcessor(files(apibFile.getPath()))
+    compileOnly("com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT")
+    annotationProcessor("com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT")
 }
 
 java {
