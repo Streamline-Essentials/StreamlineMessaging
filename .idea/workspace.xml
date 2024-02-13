@@ -4,38 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fixes.">
-      <change afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Ignored updated.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compiled/original-StreamlineMessaging-1.9.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/StreamlineCore-API-45ec19a841.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/StreamlineCore-BAPI-45ec19a841.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/StreamlineMessaging.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/StreamlineMessaging.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ChannelCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/ChannelCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/FriendCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/FriendCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/MessageCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/MessageCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/commands/ReplyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/ReplyCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ChatChannelConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/configs/ChatChannelConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Configs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/configs/Configs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ConfiguredChatChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/configs/ConfiguredChatChannel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/Messages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/configs/Messages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/configs/ViewingInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/configs/ViewingInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/events/ChannelMessageEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/events/ChannelMessageEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/listeners/MainListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/listeners/MainListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/ratapi/MessagingExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/ratapi/MessagingExpansion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/ChatterManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/savables/ChatterManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/savables/SavableChatter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/ChatterSaver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/timers/ChatterSaver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/ChatterSyncer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/timers/ChatterSyncer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tv/quaint/timers/FriendInviteExpiry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/timers/FriendInviteExpiry.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +163,7 @@
       <workItem from="1697680907693" duration="2677000" />
       <workItem from="1707685449109" duration="2740000" />
       <workItem from="1707704738113" duration="645000" />
-      <workItem from="1707705914786" duration="7482000" />
+      <workItem from="1707705914786" duration="7690000" />
     </task>
     <task id="LOCAL-00001" summary="Update : 1.0">
       <created>1658559624570</created>
@@ -418,7 +389,15 @@
       <option name="project" value="LOCAL" />
       <updated>1681613084049</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Ignored updated.">
+      <option name="closed" value="true" />
+      <created>1707853181962</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1707853181962</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -437,9 +416,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Update : 1.0" />
-    <MESSAGE value="Fix : Typo." />
-    <MESSAGE value="Fix : Configs." />
     <MESSAGE value="Fix : More minor touch-ups." />
     <MESSAGE value="Fix : Error with wrong server." />
     <MESSAGE value="Fix : Fixed some issues." />
@@ -461,8 +437,11 @@
     <MESSAGE value="Stuffs." />
     <MESSAGE value="Fixed." />
     <MESSAGE value="Java 11" />
+    <MESSAGE value="Updated to new jitpack." />
     <MESSAGE value="Fixes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixes." />
+    <MESSAGE value="Mass update." />
+    <MESSAGE value="Ignored updated." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ignored updated." />
   </component>
   <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
     <option name="sizePresets">

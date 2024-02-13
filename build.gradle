@@ -48,7 +48,9 @@ shadowJar {
         attributes 'Plugin-License': rootProject.properties['plugin-license']
     }
 
-    setArchiveFileName(archiveBaseName.get() + '-' + archiveVersion.get() + '.' + archiveExtension.get())
+    archiveFileName = project.name + '-' + project.version + '.jar'
+
+    minimize()
 }
 
 artifacts {
