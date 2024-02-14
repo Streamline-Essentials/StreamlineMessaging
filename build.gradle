@@ -38,14 +38,14 @@ java {
 
 shadowJar {
     manifest {
-        attributes 'Plugin-Class': rootProject.properties['plugin-class']
-        attributes 'Plugin-Id': rootProject.properties['plugin-id']
-        attributes 'Plugin-Version': rootProject.properties['version']
-        attributes 'Plugin-Requires': rootProject.properties['plugin-requires']
-        attributes 'Plugin-Dependencies': rootProject.properties['plugin-dependencies']
-        attributes 'Plugin-Description': rootProject.properties['plugin-description']
-        attributes 'Plugin-Provider': rootProject.properties['plugin-provider']
-        attributes 'Plugin-License': rootProject.properties['plugin-license']
+        attributes 'Plugin-Class': rootProject.properties['pf.class'].toString() + '.' + rootProject.name.toString()
+        attributes 'Plugin-Id': rootProject.properties['pf.id'].toString()
+        attributes 'Plugin-Version': rootProject.version.toString()
+        attributes 'Plugin-Requires': ( rootProject.properties['pf.requires'].toString() == 'none' ? '' : rootProject.properties['pf.requires'].toString() )
+        attributes 'Plugin-Dependencies': ( rootProject.properties['pf.dependencies'].toString() == 'none' ? '' : rootProject.properties['pf.dependencies'].toString() )
+        attributes 'Plugin-Description': rootProject.properties['pf.description'].toString()
+        attributes 'Plugin-Provider': rootProject.properties['pf.provider'].toString()
+        attributes 'Plugin-License': rootProject.properties['pf.license'].toString()
     }
 
     archiveFileName = project.name + '-' + project.version + '.jar'

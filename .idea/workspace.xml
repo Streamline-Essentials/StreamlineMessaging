@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Ignored updated.">
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Gradle">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +162,7 @@
       <workItem from="1697680907693" duration="2677000" />
       <workItem from="1707685449109" duration="2740000" />
       <workItem from="1707704738113" duration="645000" />
-      <workItem from="1707705914786" duration="7690000" />
+      <workItem from="1707705914786" duration="8578000" />
     </task>
     <task id="LOCAL-00001" summary="Update : 1.0">
       <created>1658559624570</created>
@@ -397,7 +396,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707853181962</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Gradle">
+      <option name="closed" value="true" />
+      <created>1707853324038</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1707853324038</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -416,7 +423,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Fix : More minor touch-ups." />
     <MESSAGE value="Fix : Error with wrong server." />
     <MESSAGE value="Fix : Fixed some issues." />
     <MESSAGE value="Fix : Fixed chat channels." />
@@ -441,7 +447,8 @@
     <MESSAGE value="Fixes." />
     <MESSAGE value="Mass update." />
     <MESSAGE value="Ignored updated." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ignored updated." />
+    <MESSAGE value="Gradle" />
+    <option name="LAST_COMMIT_MESSAGE" value="Gradle" />
   </component>
   <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
     <option name="sizePresets">
