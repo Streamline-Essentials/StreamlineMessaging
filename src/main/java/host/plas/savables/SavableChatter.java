@@ -505,4 +505,19 @@ public class SavableChatter implements IUuidable {
 
         return builder.toString();
     }
+
+    public void unregister() {
+        getFriendInvites().forEach((s, friendInviteExpiry) -> friendInviteExpiry.cancel());
+
+        ChatterManager.unloadChatter(this);
+    }
+
+    public void saveAndUnregister() {
+        save();
+        unregister();
+    }
+
+    public void register() {
+        ChatterManager.loadChatter(this);
+    }
 }

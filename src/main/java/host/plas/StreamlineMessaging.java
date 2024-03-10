@@ -1,28 +1,27 @@
 package host.plas;
 
+import host.plas.commands.ChannelCommand;
+import host.plas.commands.FriendCommand;
+import host.plas.commands.MessageCommand;
+import host.plas.commands.ReplyCommand;
+import host.plas.configs.ChatChannelConfig;
+import host.plas.configs.Configs;
+import host.plas.configs.Messages;
 import host.plas.database.Keeper;
+import host.plas.listeners.MainListener;
+import host.plas.ratapi.MessagingExpansion;
+import host.plas.savables.ChatterManager;
+import host.plas.timers.ChatterSaver;
+import host.plas.timers.ChatterSyncer;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.CommandHandler;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.utils.UserUtils;
-import host.plas.configs.ChatChannelConfig;
-import host.plas.configs.Configs;
-import host.plas.configs.Messages;
-import host.plas.commands.ChannelCommand;
-import host.plas.commands.FriendCommand;
-import host.plas.commands.MessageCommand;
-import host.plas.commands.ReplyCommand;
-import host.plas.listeners.MainListener;
-import host.plas.ratapi.MessagingExpansion;
-import host.plas.savables.ChatterManager;
-import host.plas.timers.ChatterSaver;
-import host.plas.timers.ChatterSyncer;
 import org.pf4j.PluginWrapper;
 
 import java.io.File;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 public class StreamlineMessaging extends SimpleModule {
     @Getter
@@ -88,21 +87,6 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Override
     public void onDisable() {
-        ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> {
-            savableChatter.save();
-            savableChatter.getStorageResource().push();
-            ChatterManager.syncChatter(savableChatter);
-        });
-        ChatterManager.setLoadedChatters(new ConcurrentSkipListMap<>());
-
-        getMessagingExpansion().stop();
-
-        CommandHandler.getLoadedModuleCommands().forEach((s, moduleCommand) -> {
-            if (! s.equals(getIdentifier())) return;
-
-            if (moduleCommand != null) {
-                moduleCommand.unregister();
-            }
-        });
+        ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> savableChatter.saveAndUnregister());
     }
 }

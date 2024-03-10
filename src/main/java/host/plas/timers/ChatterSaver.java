@@ -4,8 +4,6 @@ import net.streamline.api.scheduler.ModuleRunnable;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import host.plas.savables.ChatterManager;
-import tv.quaint.storage.resources.cache.CachedResource;
-import tv.quaint.storage.resources.cache.CachedResourceUtils;
 
 public class ChatterSaver extends ModuleRunnable {
     public ChatterSaver() {
@@ -18,10 +16,7 @@ public class ChatterSaver extends ModuleRunnable {
             chatter.save();
 
             if (StreamlineMessaging.getChatterDatabase() != null) {
-                if (! StreamlineMessaging.getChatterDatabase().exists(StreamlineMessaging.getChatterDatabase().getConfig().getTablePrefix() + "chatter")) {
-                    CachedResourceUtils.pushToDatabase(StreamlineMessaging.getChatterDatabase().getConfig().getTablePrefix() + "chatter",
-                            (CachedResource<?>) chatter.getStorageResource(), StreamlineMessaging.getChatterDatabase());
-                }
+                StreamlineMessaging.getChatterDatabase().save(chatter);
             }
         }
     }
