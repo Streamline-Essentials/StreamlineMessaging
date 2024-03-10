@@ -1,15 +1,19 @@
 package host.plas.commands;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
 import net.streamline.api.configs.given.MainMessagesHandler;
 import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.savables.users.StreamlineUser;
+import net.streamline.api.data.console.StreamSender;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import host.plas.savables.ChatterManager;
+import net.streamline.api.utils.UserUtils;
 
 import java.util.concurrent.ConcurrentSkipListSet;
 
+@Getter @Setter
 public class ReplyCommand extends ModuleCommand {
     private String messageSender;
     private String messageRecipient;
@@ -22,30 +26,35 @@ public class ReplyCommand extends ModuleCommand {
         );
 
         messageSender = this.getCommandResource().getOrSetDefault("messages.success.sender",
-                "&8[&dYOU &7(&e%streamline_user_server%&7) &9&l>> &d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/*%&8] &7%this_message%");
+                "&dYOU &9&l→ &d%streamline_parse_%this_other%:::*/*streamline_user_formatted*/* &7(&e*/*streamline_user_server*/*&7)%&7:\n" +
+                        "         &f%this_message%");
         messageRecipient = this.getCommandResource().getOrSetDefault("messages.success.recipient",
-                "&8[&d%streamline_user_formatted% &7(&e%streamline_user_server%&7) &9&l>> &dYOU&8] &7%this_message%");
+                "&d%streamline_user_formatted% &7(&e%streamline_user_server%&7) &9&l→ &dYOU&7: &f%this_message%");
     }
 
     @Override
-    public void run(StreamlineUser streamlineUser, String[] strings) {
-        if (strings[0].equals("")) {
-            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+    public void run(StreamSender StreamSender, String[] strings) {
+        if (strings[0].isEmpty()) {
+            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
         String message = ModuleUtils.argsToString(strings);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
-        StreamlineUser other = ModuleUtils.getOrGetUser(chatter.getReplyTo());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamSender.getUuid());
+        if (chatter == null) {
+            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+            return;
+        }
+        StreamSender other = UserUtils.getOrGetSender(chatter.getReplyTo()).orElse(null);
         if (other == null) {
-            ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
         chatter.onReply(other, message, messageSender, messageRecipient);
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }

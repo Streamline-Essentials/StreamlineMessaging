@@ -1,5 +1,6 @@
 package host.plas;
 
+import host.plas.database.Keeper;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.CommandHandler;
@@ -16,10 +17,9 @@ import host.plas.commands.ReplyCommand;
 import host.plas.listeners.MainListener;
 import host.plas.ratapi.MessagingExpansion;
 import host.plas.savables.ChatterManager;
-import tv.quaint.storage.resources.databases.DatabaseResource;
-import net.streamline.thebase.lib.pf4j.PluginWrapper;
 import host.plas.timers.ChatterSaver;
 import host.plas.timers.ChatterSyncer;
+import org.pf4j.PluginWrapper;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -48,7 +48,7 @@ public class StreamlineMessaging extends SimpleModule {
     static MessagingExpansion messagingExpansion;
 
     @Getter @Setter
-    static DatabaseResource<?> chatterDatabase;
+    static Keeper chatterDatabase;
 
     public StreamlineMessaging(PluginWrapper wrapper) {
         super(wrapper);
@@ -64,6 +64,8 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Override
     public void onEnable() {
+        chatterDatabase = new Keeper();
+
         configs = new Configs();
         messages = new Messages();
         chatChannelConfig = new ChatChannelConfig();
@@ -78,7 +80,6 @@ public class StreamlineMessaging extends SimpleModule {
 
         ChatterManager.getOrGetChatter(UserUtils.getConsole());
 
-
         new ChannelCommand().register();
         new MessageCommand().register();
         new ReplyCommand().register();
@@ -88,7 +89,7 @@ public class StreamlineMessaging extends SimpleModule {
     @Override
     public void onDisable() {
         ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> {
-            savableChatter.saveAll();
+            savableChatter.save();
             savableChatter.getStorageResource().push();
             ChatterManager.syncChatter(savableChatter);
         });

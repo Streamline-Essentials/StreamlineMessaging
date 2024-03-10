@@ -1,6 +1,8 @@
 package host.plas.ratapi;
 
 import net.streamline.api.configs.given.MainMessagesHandler;
+import net.streamline.api.data.console.StreamSender;
+import net.streamline.api.data.players.StreamPlayer;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.placeholders.expansions.RATExpansion;
 import net.streamline.api.placeholders.replaceables.IdentifiedReplaceable;
@@ -44,7 +46,9 @@ public class MessagingExpansion extends RATExpansion {
     }
 
     public String startsWithFriendsWith(String s, SavableChatter chatter) {
-        SavableChatter otherChatter = ChatterManager.getOrGetChatter(ModuleUtils.getUUIDFromName(s));
+        String uuid = ModuleUtils.getUUIDFromName(s).orElse(null);
+        if (uuid == null) return "";
+        SavableChatter otherChatter = ChatterManager.getOrGetChatter(uuid);
         return chatter.isMyBestFriend(otherChatter) ?
                 MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
                 MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_FALSE.get();

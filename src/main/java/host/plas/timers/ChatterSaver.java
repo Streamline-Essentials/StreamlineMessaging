@@ -15,7 +15,7 @@ public class ChatterSaver extends ModuleRunnable {
     @Override
     public void run() {
         for (SavableChatter chatter : ChatterManager.getLoadedChatters().values()) {
-            chatter.saveAll();
+            chatter.save();
 
             if (StreamlineMessaging.getChatterDatabase() != null) {
                 if (! StreamlineMessaging.getChatterDatabase().exists(StreamlineMessaging.getChatterDatabase().getConfig().getTablePrefix() + "chatter")) {

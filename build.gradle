@@ -22,12 +22,12 @@ dependencies {
     compileOnly 'net.luckperms:api:5.4'
 
     // StreamlineCore
-    compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
-    annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
+    compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:64c673b4c6'
+    annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:64c673b4c6'
 
     if (properties['include-bapi']) {
-        compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
-        annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
+        compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:64c673b4c6'
+        annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:64c673b4c6'
     }
 }
 

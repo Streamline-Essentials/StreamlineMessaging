@@ -45,7 +45,7 @@ public class MainListener implements BaseEventListener {
 
     @BaseProcessor
     public void onJoin(LoginCompletedEvent event) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getResource().getUuid());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUuid());
 //        ChatterManager.getChatterFromDatabase(chatter);
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {

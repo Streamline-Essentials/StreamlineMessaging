@@ -1,18 +1,22 @@
 package host.plas.commands;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
 import net.streamline.api.configs.given.MainMessagesHandler;
 import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.savables.users.StreamlineUser;
+import net.streamline.api.data.console.StreamSender;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import host.plas.savables.ChatterManager;
+import net.streamline.api.utils.UserUtils;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+@Getter @Setter
 public class FriendCommand extends ModuleCommand {
     private String messageResultRequestSender;
     private String messageResultRequestOther;
@@ -71,15 +75,19 @@ public class FriendCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamlineUser streamlineUser, String[] strings) {
+    public void run(StreamSender streamSender, String[] strings) {
         String action;
-        if (strings[0].equals("")) {
+        if (strings[0].isEmpty()) {
             action = "list";
         } else {
             action = strings[0];
         }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(streamlineUser.getUuid());
+        SavableChatter chatter = ChatterManager.getOrGetChatter(streamSender.getUuid());
+        if (chatter == null) {
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+            return;
+        }
 
         switch (action.toLowerCase(Locale.ROOT)) {
             case "list":
@@ -91,24 +99,24 @@ public class FriendCommand extends ModuleCommand {
                         page = Integer.parseInt(strings[1]);
                     } catch (Exception e) {
                         page = 1;
-                        ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TYPE_NUMBER.get());
+                        ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TYPE_NUMBER.get());
                     }
                 }
 
                 if (strings.length > 3) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
                     return;
                 }
 
                 if (strings.length == 3) {
-                    if (! ModuleUtils.hasPermission(streamlineUser, permissionListOthers)) {
-                        ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.PERMISSIONS.get());
+                    if (! streamSender.hasPermission(permissionListOthers)) {
+                        ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.PERMISSIONS.get());
                         return;
                     }
 
-                    StreamlineUser other = ModuleUtils.getOrGetUserByName(strings[2]);
+                    StreamSender other = UserUtils.getOrGetUserByName(strings[2]).orElse(null);
                     if (other == null) {
-                        ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                        ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                         return;
                     }
 
@@ -120,7 +128,7 @@ public class FriendCommand extends ModuleCommand {
                         p = "";
                     }
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultListOther, other)
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultListOther, other)
                             .replace("%this_page%", String.valueOf(page))
                             .replace("%this_friends_list%", p)
                     );
@@ -131,7 +139,7 @@ public class FriendCommand extends ModuleCommand {
                         p = "";
                     }
 
-                    ModuleUtils.sendMessage(streamlineUser, messageResultListSelf
+                    ModuleUtils.sendMessage(streamSender, messageResultListSelf
                             .replace("%this_page%", String.valueOf(page))
                             .replace("%this_friends_list%", p)
                     );
@@ -140,25 +148,29 @@ public class FriendCommand extends ModuleCommand {
             case "add":
             case "accept":
                 if (strings.length < 2) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
                     return;
                 }
 
                 String username = strings[1];
-                if (Objects.equals(username, streamlineUser.getLatestName())) {
-                    ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().errorsFriendSelfInvite());
+                if (Objects.equals(username, streamSender.getCurrentName())) {
+                    ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().errorsFriendSelfInvite());
                     return;
                 }
 
-                StreamlineUser other = ModuleUtils.getOrGetUserByName(username);
+                StreamSender other = UserUtils.getOrGetUserByName(username).orElse(null);
                 if (other == null) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
                 SavableChatter otherChatter = ChatterManager.getOrGetChatter(other.getUuid());
+                if (otherChatter == null) {
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    return;
+                }
                 if (chatter.isMyFriend(otherChatter)) {
-                    ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyFriends());
+                    ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyFriends());
                     return;
                 }
 
@@ -166,58 +178,62 @@ public class FriendCommand extends ModuleCommand {
                     chatter.addFriend(otherChatter);
                     otherChatter.addFriend(chatter);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultAcceptSender, other));
-                    ModuleUtils.sendMessage(other, getWithOther(streamlineUser, messageResultAcceptOther, other));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultAcceptSender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(streamSender, messageResultAcceptOther, other));
                 } else {
                     if (chatter.isAlreadyFriendInvited(otherChatter)) {
-                        ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyInvited());
+                        ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyInvited());
                         return;
                     }
                     if (! otherChatter.isAcceptingFriendRequests()) {
-                        ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsToggledOffInvites());
+                        ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsToggledOffInvites());
                         return;
                     }
                     chatter.addInviteTo(otherChatter);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultRequestSender, other));
-                    ModuleUtils.sendMessage(other, getWithOther(streamlineUser, messageResultRequestOther, other));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultRequestSender, other));
+                    ModuleUtils.sendMessage(other, getWithOther(streamSender, messageResultRequestOther, other));
                 }
                 break;
             case "remove":
             case "deny":
                 if (strings.length < 2) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
                     return;
                 }
 
                 String usernameRemove = strings[1];
-                if (Objects.equals(usernameRemove, streamlineUser.getLatestName())) {
-                    ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().errorsFriendSelfInvite());
+                if (Objects.equals(usernameRemove, streamSender.getCurrentName())) {
+                    ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().errorsFriendSelfInvite());
                     return;
                 }
 
-                StreamlineUser otherRemove = ModuleUtils.getOrGetUserByName(usernameRemove);
+                StreamSender otherRemove = UserUtils.getOrGetUserByName(usernameRemove).orElse(null);
                 if (otherRemove == null) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
                 SavableChatter otherChatterRemove = ChatterManager.getOrGetChatter(otherRemove.getUuid());
+                if (otherChatterRemove == null) {
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    return;
+                }
 
                 if (chatter.isAlreadyFriendInvited(otherRemove.getUuid())) {
                     if (chatter.isMyFriend(otherChatterRemove)) {
-                        ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyFriends());
+                        ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyFriends());
                         return;
                     }
 
                     chatter.removeInviteTo(otherChatterRemove);
                     otherChatterRemove.removeInviteTo(chatter);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultDenySender, otherRemove));
-                    ModuleUtils.sendMessage(otherRemove, getWithOther(streamlineUser, messageResultDenyOther, otherRemove));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultDenySender, otherRemove));
+                    ModuleUtils.sendMessage(otherRemove, getWithOther(streamSender, messageResultDenyOther, otherRemove));
                 } else {
                     if (! chatter.isMyFriend(otherChatterRemove)) {
-                        ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyNotFriends());
+                        ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyNotFriends());
                         return;
                     }
 
@@ -226,63 +242,67 @@ public class FriendCommand extends ModuleCommand {
                     chatter.removeFriend(otherChatterRemove);
                     otherChatterRemove.removeFriend(chatter);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultRemoveSender, otherRemove));
-                    ModuleUtils.sendMessage(otherRemove, getWithOther(streamlineUser, messageResultRemoveOther, otherRemove));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultRemoveSender, otherRemove));
+                    ModuleUtils.sendMessage(otherRemove, getWithOther(streamSender, messageResultRemoveOther, otherRemove));
                 }
                 break;
             case "teleport":
                 if (strings.length < 2) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
                     return;
                 }
 
                 String usernameTeleport = strings[1];
-                StreamlineUser otherTeleport = ModuleUtils.getOrGetUserByName(usernameTeleport);
+                StreamSender otherTeleport = UserUtils.getOrGetUserByName(usernameTeleport).orElse(null);
                 if (otherTeleport == null) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
                 if (! otherTeleport.isOnline()) {
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageErrorOfflineOther, otherTeleport));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageErrorOfflineOther, otherTeleport));
                     return;
                 }
 
-                ModuleUtils.connect(streamlineUser, otherTeleport.getLatestName());
-                ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultTeleportSender, otherTeleport));
-                ModuleUtils.sendMessage(otherTeleport, getWithOther(streamlineUser, messageResultTeleportOther, otherTeleport));
+                ModuleUtils.connect(streamSender, otherTeleport.getCurrentName());
+                ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultTeleportSender, otherTeleport));
+                ModuleUtils.sendMessage(otherTeleport, getWithOther(streamSender, messageResultTeleportOther, otherTeleport));
                 break;
             case "best":
                 if (strings.length < 2) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
                     return;
                 }
 
                 String usernameBest = strings[1];
-                StreamlineUser otherBest = ModuleUtils.getOrGetUserByName(usernameBest);
+                StreamSender otherBest = UserUtils.getOrGetUserByName(usernameBest).orElse(null);
                 if (otherBest == null) {
-                    ModuleUtils.sendMessage(streamlineUser, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
                 SavableChatter otherChatterBest = ChatterManager.getOrGetChatter(otherBest.getUuid());
+                if (otherChatterBest == null) {
+                    ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+                    return;
+                }
                 if (chatter.isMyFriend(otherChatterBest)) {
-                    ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyFriends());
+                    ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyFriends());
                     return;
                 }
 
                 if (strings.length < 3) {
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultBestCheck, otherBest));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultBestCheck, otherBest));
                     return;
                 }
 
                 switch (strings[2]) {
                     case "check":
-                        ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultBestCheck, otherBest));
+                        ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultBestCheck, otherBest));
                         break;
                     case "add":
                         if (chatter.isMyBestFriend(otherChatterBest)) {
-                            ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyBestFriends());
+                            ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyBestFriends());
                             return;
                         }
 
@@ -290,7 +310,7 @@ public class FriendCommand extends ModuleCommand {
                         break;
                     case "remove":
                         if (! chatter.isMyBestFriend(otherChatterBest)) {
-                            ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyNotBestFriends());
+                            ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyNotBestFriends());
                             return;
                         }
 
@@ -302,28 +322,28 @@ public class FriendCommand extends ModuleCommand {
                     chatter.addFriend(otherChatterBest);
                     otherChatterBest.addFriend(chatter);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultAcceptSender, otherBest));
-                    ModuleUtils.sendMessage(otherBest, getWithOther(streamlineUser, messageResultAcceptOther, otherBest));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultAcceptSender, otherBest));
+                    ModuleUtils.sendMessage(otherBest, getWithOther(streamSender, messageResultAcceptOther, otherBest));
                 } else {
                     if (chatter.isAlreadyFriendInvited(otherChatterBest)) {
-                        ModuleUtils.sendMessage(streamlineUser, StreamlineMessaging.getMessages().friendsAlreadyInvited());
+                        ModuleUtils.sendMessage(streamSender, StreamlineMessaging.getMessages().friendsAlreadyInvited());
                         return;
                     }
                     chatter.addInviteTo(otherChatterBest);
 
-                    ModuleUtils.sendMessage(streamlineUser, getWithOther(streamlineUser, messageResultRequestSender, otherBest));
-                    ModuleUtils.sendMessage(otherBest, getWithOther(streamlineUser, messageResultRequestOther, otherBest));
+                    ModuleUtils.sendMessage(streamSender, getWithOther(streamSender, messageResultRequestSender, otherBest));
+                    ModuleUtils.sendMessage(otherBest, getWithOther(streamSender, messageResultRequestOther, otherBest));
                 }
                 break;
             case "toggle":
                 chatter.setAcceptingFriendRequests(! chatter.isAcceptingFriendRequests());
-                ModuleUtils.sendMessage(streamlineUser, messageResultToggle);
+                ModuleUtils.sendMessage(streamSender, messageResultToggle);
                 break;
         }
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamlineUser StreamlineUser, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
         if (strings.length <= 1) {
             return new ConcurrentSkipListSet<>(List.of(
                     "list",

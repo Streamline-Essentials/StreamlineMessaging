@@ -1,28 +1,23 @@
 package host.plas.savables;
 
-import lombok.Getter;
-import lombok.Setter;
-import net.streamline.api.events.server.StreamlineChatEvent;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.savables.SavableResource;
-import net.streamline.api.savables.users.StreamlineUser;
 import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
-import tv.quaint.storage.resources.StorageResource;
-import tv.quaint.storage.resources.flat.FlatFileResource;
 import host.plas.timers.FriendInviteExpiry;
-import tv.quaint.utils.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
+import net.streamline.api.data.IUuidable;
+import net.streamline.api.data.console.StreamSender;
+import net.streamline.api.events.server.StreamlineChatEvent;
+import net.streamline.api.modules.ModuleUtils;
+import net.streamline.api.utils.UserUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
-public class SavableChatter extends SavableResource {
-    @Override
-    public StorageResource<?> getStorageResource() {
-        return super.getStorageResource();
-    }
+@Getter @Setter
+public class SavableChatter implements IUuidable {
+    private String uuid;
 
     @Getter
     private ConfiguredChatChannel currentChatChannel;
@@ -35,15 +30,17 @@ public class SavableChatter extends SavableResource {
     @Getter @Setter
     private String lastMessageReceived;
     @Getter @Setter
-    private ConcurrentHashMap<ConfiguredChatChannel, Boolean> viewing = new ConcurrentHashMap<>();
+    private boolean acceptingFriendRequests;
     @Getter @Setter
-    private ConcurrentSkipListMap<Date, String> friends = new ConcurrentSkipListMap<>();
+    private ConcurrentHashMap<ConfiguredChatChannel, Boolean> viewing;
     @Getter @Setter
-    private ConcurrentSkipListMap<String, FriendInviteExpiry> friendInvites = new ConcurrentSkipListMap<>();
+    private ConcurrentSkipListMap<Date, String> friends;
     @Getter @Setter
-    private ConcurrentSkipListMap<Date, String> bestFriends = new ConcurrentSkipListMap<>();
+    private ConcurrentSkipListMap<Date, String> ignoring;
     @Getter @Setter
-    private boolean acceptingFriendRequests = true;
+    private ConcurrentSkipListMap<String, FriendInviteExpiry> friendInvites;
+    @Getter @Setter
+    private ConcurrentSkipListMap<Date, String> bestFriends;
 
     public void setCurrentChatChannel(ConfiguredChatChannel chatChannel) {
         if (! chatChannel.getIdentifier().equals(StreamlineMessaging.getConfigs().defaultChat())) {
@@ -58,100 +55,61 @@ public class SavableChatter extends SavableResource {
     }
 
     public SavableChatter(String uuid) {
-        this(uuid, true);
-    }
-
-    public SavableChatter(String uuid, boolean load) {
-        super(uuid, ChatterManager.newStorageResourceUsers(uuid, SavableChatter.class));
-        if (load) loadAfter();
-    }
-
-    @Override
-    public void populateDefaults() {
-        String chatIdentifier = getStorageResource().getOrSetDefault("chat-channel.identifier", StreamlineMessaging.getConfigs().defaultChat());
-        ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(chatIdentifier);
-        if (channel == null) {
-            StreamlineMessaging.getInstance().logWarning("Tried to load a chat channel with identifier '" + chatIdentifier + "' for uuid '" + this.getUuid() + "', but found no suitable chat channels! Defaulting to none!");
-            this.currentChatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get("none");
-        } else {
-            this.currentChatChannel = channel;
-        }
-        replyTo = getStorageResource().getOrSetDefault("messaging.reply-to", "null");
-        lastMessage = getStorageResource().getOrSetDefault("messaging.last.normal", "");
-        lastMessageSent = getStorageResource().getOrSetDefault("messaging.last.sent", "");
-        lastMessageReceived = getStorageResource().getOrSetDefault("messaging.last.received", "");
-
+        this.uuid = uuid;
+        
+        this.currentChatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannel(StreamlineMessaging.getConfigs().defaultChat());
+        this.replyTo = "";
+        this.lastMessage = "";
+        this.lastMessageSent = "";
+        this.lastMessageReceived = "";
+        this.acceptingFriendRequests = true;
         this.viewing = new ConcurrentHashMap<>();
-        String v = getStorageResource().getOrSetDefault("chat-channel.specific.viewing", getDefaultChannelsViewing());
-        List<String> viewing = Arrays.asList(v.split(";"));
-        viewing.forEach(s -> {
-            if (s == null) return;
-            if (s.isEmpty()) return;
-            if (s.isBlank()) return;
-            String[] split = s.split(",", 2);
-            if (split.length != 2) return;
-            ConfiguredChatChannel chatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(split[0]);
-            if (chatChannel == null) return;
-
-            boolean is = false;
-            try {
-                is = Boolean.parseBoolean(split[1]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            this.viewing.put(chatChannel, is);
-        });
-        friends = getFriendMapFromResource("friends.list", new ConcurrentSkipListMap<>());
-        List<String> invites = getStringListFromResource("friends.invites.list", new ArrayList<>());
-        friendInvites = new ConcurrentSkipListMap<>();
-        invites.forEach(s -> {
-            friendInvites.put(s, new FriendInviteExpiry(ChatterManager.getOrGetChatter(s), this, StreamlineMessaging.getConfigs().friendInviteTime()));
-        });
-        bestFriends = getFriendMapFromResource("friends.best.list", new ConcurrentSkipListMap<>());
-        acceptingFriendRequests = getStorageResource().getOrSetDefault("friends.invites.accepting", true);
+        this.friends = new ConcurrentSkipListMap<>();
+        this.ignoring = new ConcurrentSkipListMap<>();
+        this.friendInvites = new ConcurrentSkipListMap<>();
+        this.bestFriends = new ConcurrentSkipListMap<>();
     }
-
-    public List<String> getStringListFromResource(String key, List<String> def){
-        String defString = StringUtils.listToString(def, ",");
-        try {
-            String s = getStorageResource().getOrSetDefault(key, defString);
-            return StringUtils.stringToList(s, ",");
-        } catch (ClassCastException e) {
-            try {
-                return getStorageResource().getOrSetDefault(key, def);
-            } catch (ClassCastException error) {
-                if (getStorageResource() instanceof FlatFileResource<?>) {
-                    FlatFileResource<?> flatFileResource = (FlatFileResource<?>) getStorageResource();
-
-                    flatFileResource.getResource().remove(key);
-                }
-                getStorageResource().write(key, defString);
-                return StringUtils.stringToList(defString, ",");
-            }
-        }
+    
+    public void setViewed(String channel, boolean viewed) {
+        ConfiguredChatChannel chatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannel(channel);
+        if (chatChannel == null) return;
+        
+        viewing.put(chatChannel, viewed);
     }
-
-    public ConcurrentSkipListMap<Date, String> getFriendMapFromResource(String key, ConcurrentSkipListMap<Long, String> def){
-        ConcurrentSkipListSet<String> entriesStrings = new ConcurrentSkipListSet<>();
-        def.forEach((aLong, s) -> {
-           entriesStrings.add(aLong + "!!" + s);
-        });
-
-        List<String> split = getStringListFromResource(key, new ArrayList<>(entriesStrings));
-        ConcurrentSkipListMap<Date, String> map = new ConcurrentSkipListMap<>();
-        split.forEach(s -> {
-            String[] split1 = s.split("!!");
-            if (split1.length != 2) return;
-            try {
-                long l = Long.parseLong(split1[0]);
-                map.put(new Date(l), split1[1]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        return map;
+    
+    public boolean isViewed(String channel) {
+        ConfiguredChatChannel chatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannel(channel);
+        if (chatChannel == null) return false;
+        
+        return viewing.getOrDefault(chatChannel, false);
+    }
+    
+    public void setFriended(long date, String uuid) {
+        friends.put(new Date(date), uuid);
+    }
+    
+    public void setFriended(String uuid) {
+        friends.put(new Date(), uuid);
+    }
+    
+    public void setIgnored(long date, String uuid) {
+        ignoring.put(new Date(date), uuid);
+    }
+    
+    public void setIgnored(String uuid) {
+        ignoring.put(new Date(), uuid);
+    }
+    
+    public void setBestFriended(long date, String uuid) {
+        bestFriends.put(new Date(date), uuid);
+    }
+    
+    public void setBestFriended(String uuid) {
+        bestFriends.put(new Date(), uuid);
+    }
+    
+    public void setInviteSent(long ticksLeft, String uuid) {
+        FriendInviteExpiry expiry = new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(uuid), ticksLeft);
     }
 
     public static String getDefaultChannelsViewing() {
@@ -224,102 +182,19 @@ public class SavableChatter extends SavableResource {
         return list;
     }
 
-    @Override
-    public void loadValues() {
-        String chatIdentifier = getStorageResource().getOrSetDefault("chat-channel.identifier", currentChatChannel != null ? currentChatChannel.getIdentifier() : StreamlineMessaging.getConfigs().defaultChat());
-        ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(chatIdentifier);
-        if (channel == null) {
-            StreamlineMessaging.getInstance().logWarning("Tried to load a chat channel with identifier '" + chatIdentifier + "' for uuid '" + this.getUuid() + "', but found no suitable chat channels! Defaulting to none!");
-            this.currentChatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get("none");
-        } else {
-            this.currentChatChannel = channel;
-        }
-        replyTo = getStorageResource().getOrSetDefault("messaging.reply-to", replyTo);
-        lastMessage = getStorageResource().getOrSetDefault("messaging.last.normal", lastMessage);
-        lastMessageSent = getStorageResource().getOrSetDefault("messaging.last.sent", lastMessageSent);
-        lastMessageReceived = getStorageResource().getOrSetDefault("messaging.last.received", lastMessageReceived);
-
-        this.viewing = new ConcurrentHashMap<>();
-        String v = getStorageResource().getOrSetDefault("chat-channel.specific.viewing", getDefaultChannelsViewing());
-        List<String> viewing = Arrays.asList(v.split(";"));
-        viewing.forEach(s -> {
-            if (s == null) return;
-            if (s.isEmpty()) return;
-            if (s.isBlank()) return;
-            String[] split = s.split(",", 2);
-            if (split.length != 2) return;
-            ConfiguredChatChannel chatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(split[0]);
-            if (chatChannel == null) return;
-
-            boolean is = false;
-            try {
-                is = Boolean.parseBoolean(split[1]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            this.viewing.put(chatChannel, is);
-        });
-        friends = getFriendMapFromResource("friends.list", new ConcurrentSkipListMap<>());
-        List<String> invites = getStringListFromResource("friends.invites.list", new ArrayList<>());
-        friendInvites = new ConcurrentSkipListMap<>();
-        invites.forEach(s -> {
-            friendInvites.put(s, new FriendInviteExpiry(ChatterManager.getOrGetChatter(s), this, StreamlineMessaging.getConfigs().friendInviteTime()));
-        });
-        bestFriends = getFriendMapFromResource("friends.best.list", new ConcurrentSkipListMap<>());
-        acceptingFriendRequests = getStorageResource().getOrSetDefault("friends.invites.accepting", true);
+    public void save() {
+        StreamlineMessaging.getChatterDatabase().save(this);
     }
 
-    @Override
-    public void saveAll() {
-        getStorageResource().write("chat-channel.identifier", currentChatChannel.getIdentifier());
-        getStorageResource().write("messaging.reply-to", replyTo);
-        getStorageResource().write("messaging.reply-to", replyTo);
-        getStorageResource().write("messaging.last.normal", lastMessage);
-        getStorageResource().write("messaging.last.sent", lastMessageSent);
-        getStorageResource().write("messaging.last.received", lastMessageReceived);
-
-        getStorageResource().write("chat-channel.specific.viewing", getCurrentChannelsViewing(getViewing()));
-
-        StringBuilder builder = new StringBuilder();
-        getFriends().forEach((date, s) -> {
-            builder.append(date.getTime()).append("!!").append(s).append(",");
-        });
-        if (builder.length() > 0) builder.deleteCharAt(builder.length() - 1);
-        getStorageResource().write("friends.list", builder.toString());
-
-        StringBuilder builder2 = new StringBuilder();
-        getFriendInvites().forEach((s, friendInviteExpiry) -> {
-            builder2.append(s).append(",");
-        });
-        if (builder2.length() > 0) builder2.deleteCharAt(builder2.length() - 1);
-        getStorageResource().write("friends.invites.list", builder2.toString());
-
-        StringBuilder builder3 = new StringBuilder();
-        getBestFriends().forEach((date, s) -> {
-            builder3.append(date.getTime()).append("!!").append(s).append(",");
-        });
-        if (builder3.length() > 0) builder3.deleteCharAt(builder3.length() - 1);
-        getStorageResource().write("friends.best.list", builder3.toString());
-
-        getStorageResource().write("friends.invites.accepting", acceptingFriendRequests);
-
-        getStorageResource().sync();
+    public StreamSender replyToAsUser() {
+        return UserUtils.getOrGetSender(getReplyTo()).orElse(null);
     }
 
-    public void loadAfter() {
-
+    public StreamSender asUser() {
+        return UserUtils.getOrGetSender(this.getUuid()).orElse(null);
     }
 
-    public StreamlineUser replyToAsUser() {
-        return ModuleUtils.getOrGetUser(getReplyTo());
-    }
-
-    public StreamlineUser asUser() {
-        return ModuleUtils.getOrGetUser(this.getUuid());
-    }
-
-    public void onReply(StreamlineUser recipient, String message) {
+    public void onReply(StreamSender recipient, String message) {
         SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateRecipient()) other.setReplyTo(this.getUuid());
@@ -327,25 +202,25 @@ public class SavableChatter extends SavableResource {
         other.setLastMessageReceived(message);
     }
 
-    public void onReply(StreamlineUser recipient, String message, String senderFormat, String recipientFormat) {
+    public void onReply(StreamSender recipient, String message, String senderFormat, String recipientFormat) {
         if (this.getUuid().equals(recipient.getUuid())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
         }
 
         ModuleUtils.sendMessage(asUser(), senderFormat
-                .replace("%this_other%", recipient.getName())
+                .replace("%this_other%", recipient.getCurrentName())
                 .replace("%this_message%", message)
         );
         ModuleUtils.sendMessage(recipient, asUser(), recipientFormat
-                .replace("%this_other%", recipient.getName())
+                .replace("%this_other%", recipient.getCurrentName())
                 .replace("%this_message%", message)
         );
 
         onReply(recipient, message);
     }
 
-    public void onMessage(StreamlineUser recipient, String message) {
+    public void onMessage(StreamSender recipient, String message) {
         SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateRecipient()) other.setReplyTo(this.getUuid());
@@ -353,18 +228,18 @@ public class SavableChatter extends SavableResource {
         other.setLastMessageReceived(message);
     }
 
-    public void onMessage(StreamlineUser recipient, String message, String senderFormat, String recipientFormat) {
+    public void onMessage(StreamSender recipient, String message, String senderFormat, String recipientFormat) {
         if (this.getUuid().equals(recipient.getUuid())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
         }
 
         ModuleUtils.sendMessage(asUser(), senderFormat
-                .replace("%this_other%", recipient.getName())
+                .replace("%this_other%", recipient.getCurrentName())
                 .replace("%this_message%", message)
         );
         ModuleUtils.sendMessage(recipient, asUser(), recipientFormat
-                .replace("%this_other%", recipient.getName())
+                .replace("%this_other%", recipient.getCurrentName())
                 .replace("%this_message%", message)
         );
 
@@ -409,7 +284,10 @@ public class SavableChatter extends SavableResource {
     }
 
     public boolean hasViewingPermission(ConfiguredChatChannel channel) {
-        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.getUuid()), channel.getViewingInfo().getPermission());
+        StreamSender sender = asUser();
+        if (sender == null) return false;
+
+        return sender.hasPermission(channel.getViewingInfo().getPermission());
     }
 
     public boolean canMessageMeFrom(ConfiguredChatChannel channel) {
@@ -417,7 +295,10 @@ public class SavableChatter extends SavableResource {
     }
 
     public boolean canToggleViewing(ConfiguredChatChannel channel) {
-        return ModuleUtils.hasPermission(ModuleUtils.getOrGetUser(this.getUuid()), (channel.getViewingInfo().getTogglePermission()));
+        StreamSender sender = asUser();
+        if (sender == null) return false;
+
+        return sender.hasPermission(channel.getViewingInfo().getTogglePermission());
     }
 
     public void addFriend(SavableChatter chatter) {
@@ -496,7 +377,8 @@ public class SavableChatter extends SavableResource {
         for (int i = start; i < getFriends().size(); i ++) {
             if (i >= start + StreamlineMessaging.getMessages().friendsListMaxPerPage()) continue;
             String uuid = new ArrayList<>(getFriends().values()).get(i);
-            StreamlineUser user = ModuleUtils.getOrGetUser(uuid);
+            StreamSender user = asUser();
+            if (user == null) return "";
             if (i == start + StreamlineMessaging.getMessages().friendsListMaxPerPage() - 1) {
                 builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().friendsListEntryLast()));
             } else {
@@ -529,10 +411,10 @@ public class SavableChatter extends SavableResource {
     public void handleInviteExpiryEnd(FriendInviteExpiry expiry) {
         removeInviteTo(expiry.getInvited());
         ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutSender()
-                .replace("%this_other%", expiry.getInvited().asUser().getName())
+                .replace("%this_other%", expiry.getInvited().asUser().getCurrentName())
         );
         ModuleUtils.sendMessage(expiry.getInvited().asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutInvited()
-                .replace("%this_other%", asUser().getName())
+                .replace("%this_other%", asUser().getCurrentName())
         );
     }
 
@@ -612,7 +494,8 @@ public class SavableChatter extends SavableResource {
         for (int i = start; i < getBestFriends().size(); i ++) {
             if (i >= start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage()) continue;
             String uuid = new ArrayList<>(getBestFriends().values()).get(i);
-            StreamlineUser user = ModuleUtils.getOrGetUser(uuid);
+            StreamSender user = asUser();
+            if (user == null) return "";
             if (i == start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage() - 1) {
                 builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().bestFriendsListEntryLast()));
             } else {

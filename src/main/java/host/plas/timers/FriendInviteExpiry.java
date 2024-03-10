@@ -6,15 +6,14 @@ import net.streamline.api.scheduler.ModuleRunnable;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 
+@Getter
 public class FriendInviteExpiry extends ModuleRunnable {
-    @Getter
     private final SavableChatter sender;
-    @Getter
     private final SavableChatter invited;
-    @Getter @Setter
-    private int ticksLeft;
+    @Setter
+    private long ticksLeft;
 
-    public FriendInviteExpiry(SavableChatter sender, SavableChatter invited, int ticksLeft) {
+    public FriendInviteExpiry(SavableChatter sender, SavableChatter invited, long ticksLeft) {
         super(StreamlineMessaging.getInstance(), 0L, 1L);
         this.sender = sender;
         this.invited = invited;
