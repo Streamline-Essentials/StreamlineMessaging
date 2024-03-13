@@ -8,14 +8,14 @@ import host.plas.configs.ChatChannelConfig;
 import host.plas.configs.Configs;
 import host.plas.configs.Messages;
 import host.plas.database.Keeper;
+import host.plas.database.MyLoader;
 import host.plas.listeners.MainListener;
 import host.plas.ratapi.MessagingExpansion;
-import host.plas.savables.ChatterManager;
+import host.plas.savables.SavableChatter;
 import host.plas.timers.ChatterSaver;
-import host.plas.timers.ChatterSyncer;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.CommandHandler;
+import net.streamline.api.data.console.StreamSender;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.modules.SimpleModule;
 import net.streamline.api.utils.UserUtils;
@@ -47,7 +47,7 @@ public class StreamlineMessaging extends SimpleModule {
     static MessagingExpansion messagingExpansion;
 
     @Getter @Setter
-    static Keeper chatterDatabase;
+    static Keeper keeper;
 
     public StreamlineMessaging(PluginWrapper wrapper) {
         super(wrapper);
@@ -63,7 +63,7 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Override
     public void onEnable() {
-        chatterDatabase = new Keeper();
+        keeper = new Keeper();
 
         configs = new Configs();
         messages = new Messages();
@@ -75,9 +75,10 @@ public class StreamlineMessaging extends SimpleModule {
         ModuleUtils.listen(mainListener, this);
         getMessagingExpansion().init();
 
-        new ChatterSyncer();
-
-        ChatterManager.getOrGetChatter(UserUtils.getConsole());
+        StreamSender console = UserUtils.getConsole();
+        if (console == null) {
+            logSevere("Console is null");
+        } else MyLoader.getInstance().getConsole();
 
         new ChannelCommand().register();
         new MessageCommand().register();
@@ -87,6 +88,6 @@ public class StreamlineMessaging extends SimpleModule {
 
     @Override
     public void onDisable() {
-        ChatterManager.getLoadedChatters().forEach((s, savableChatter) -> savableChatter.saveAndUnregister());
+        MyLoader.getInstance().getLoaded().forEach(SavableChatter::unregister);
     }
 }

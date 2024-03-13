@@ -2,12 +2,13 @@ package host.plas.savables;
 
 import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
+import host.plas.database.MyLoader;
 import host.plas.timers.FriendInviteExpiry;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.data.IUuidable;
 import net.streamline.api.data.console.StreamSender;
 import net.streamline.api.events.server.StreamlineChatEvent;
+import net.streamline.api.loading.Loadable;
 import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.utils.UserUtils;
 
@@ -16,8 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 @Getter @Setter
-public class SavableChatter implements IUuidable {
-    private String uuid;
+public class SavableChatter implements Loadable {
+    private String identifier;
+
+    public String getUuid() {
+        return identifier;
+    }
 
     @Getter
     private ConfiguredChatChannel currentChatChannel;
@@ -55,7 +60,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public SavableChatter(String uuid) {
-        this.uuid = uuid;
+        this.identifier = uuid;
         
         this.currentChatChannel = StreamlineMessaging.getChatChannelConfig().getChatChannel(StreamlineMessaging.getConfigs().defaultChat());
         this.replyTo = "";
@@ -109,7 +114,7 @@ public class SavableChatter implements IUuidable {
     }
     
     public void setInviteSent(long ticksLeft, String uuid) {
-        FriendInviteExpiry expiry = new FriendInviteExpiry(this, ChatterManager.getOrGetChatter(uuid), ticksLeft);
+        FriendInviteExpiry expiry = new FriendInviteExpiry(this, MyLoader.getInstance().getOrCreate(uuid), ticksLeft);
     }
 
     public static String getDefaultChannelsViewing() {
@@ -183,19 +188,19 @@ public class SavableChatter implements IUuidable {
     }
 
     public void save() {
-        StreamlineMessaging.getChatterDatabase().save(this);
+        StreamlineMessaging.getKeeper().save(this);
     }
 
     public StreamSender replyToAsUser() {
-        return UserUtils.getOrGetSender(getReplyTo()).orElse(null);
+        return UserUtils.getOrCreateSender(getReplyTo());
     }
 
     public StreamSender asUser() {
-        return UserUtils.getOrGetSender(this.getUuid()).orElse(null);
+        return UserUtils.getOrCreateSender(this.getUuid());
     }
 
     public void onReply(StreamSender recipient, String message) {
-        SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUuid());
+        SavableChatter other = MyLoader.getInstance().getOrCreate(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateRecipient()) other.setReplyTo(this.getUuid());
         setLastMessageSent(message);
@@ -221,7 +226,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public void onMessage(StreamSender recipient, String message) {
-        SavableChatter other = ChatterManager.getOrGetChatter(recipient.getUuid());
+        SavableChatter other = MyLoader.getInstance().getOrCreate(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateRecipient()) other.setReplyTo(this.getUuid());
         setLastMessageSent(message);
@@ -290,7 +295,7 @@ public class SavableChatter implements IUuidable {
         return sender.hasPermission(channel.getViewingInfo().getPermission());
     }
 
-    public boolean canMessageMeFrom(ConfiguredChatChannel channel) {
+    public boolean canMessageFrom(ConfiguredChatChannel channel) {
         return hasViewingPermission(channel) && isViewing(channel);
     }
 
@@ -309,11 +314,11 @@ public class SavableChatter implements IUuidable {
     }
 
     public void addFriend(String uuid) {
-        this.addFriend(ChatterManager.getOrGetChatter(uuid));
+        this.addFriend(MyLoader.getInstance().getOrCreate(uuid));
     }
 
     public void addFriendOther(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         chatter.addFriend(this);
     }
 
@@ -325,11 +330,11 @@ public class SavableChatter implements IUuidable {
     }
 
     public void removeFriend(String uuid) {
-        this.removeFriend(ChatterManager.getOrGetChatter(uuid));
+        this.removeFriend(MyLoader.getInstance().getOrCreate(uuid));
     }
 
     public void removeFriendOther(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         chatter.removeFriend(this);
     }
 
@@ -342,7 +347,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public Date getMeFriendedAtOf(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         return chatter.getFriendedAt(this.getUuid());
     }
 
@@ -355,7 +360,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public boolean isMeFriendOf(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         return chatter.isMyFriend(this.getUuid());
     }
 
@@ -426,11 +431,11 @@ public class SavableChatter implements IUuidable {
     }
 
     public void addBestFriend(String uuid) {
-        this.addBestFriend(ChatterManager.getOrGetChatter(uuid));
+        this.addBestFriend(MyLoader.getInstance().getOrCreate(uuid));
     }
 
     public void addBestFriendOther(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         chatter.addBestFriend(this);
     }
 
@@ -442,11 +447,11 @@ public class SavableChatter implements IUuidable {
     }
 
     public void removeBestFriend(String uuid) {
-        this.removeBestFriend(ChatterManager.getOrGetChatter(uuid));
+        this.removeBestFriend(MyLoader.getInstance().getOrCreate(uuid));
     }
 
     public void removeBestFriendOther(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         chatter.removeBestFriend(this);
     }
 
@@ -459,7 +464,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public Date getMeBestFriendedAtOf(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         return chatter.getBestFriendedAt(this.getUuid());
     }
 
@@ -472,7 +477,7 @@ public class SavableChatter implements IUuidable {
     }
 
     public boolean isMeBestFriendOf(String uuid) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(uuid);
         return chatter.isMyBestFriend(this.getUuid());
     }
 
@@ -509,15 +514,10 @@ public class SavableChatter implements IUuidable {
     public void unregister() {
         getFriendInvites().forEach((s, friendInviteExpiry) -> friendInviteExpiry.cancel());
 
-        ChatterManager.unloadChatter(this);
-    }
-
-    public void saveAndUnregister() {
-        save();
-        unregister();
+        MyLoader.getInstance().unload(this);
     }
 
     public void register() {
-        ChatterManager.loadChatter(this);
+        MyLoader.getInstance().load(this);
     }
 }

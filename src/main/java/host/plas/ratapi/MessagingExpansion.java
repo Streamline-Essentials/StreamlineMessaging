@@ -1,5 +1,6 @@
 package host.plas.ratapi;
 
+import host.plas.database.MyLoader;
 import net.streamline.api.configs.given.MainMessagesHandler;
 import net.streamline.api.data.console.StreamSender;
 import net.streamline.api.data.players.StreamPlayer;
@@ -20,24 +21,24 @@ public class MessagingExpansion extends RATExpansion {
 
     @Override
     public void init() {
-        new IdentifiedReplaceable(this, "loaded_chatters", (s) -> String.valueOf(ChatterManager.getLoadedChatters().size())).register();
+        new IdentifiedReplaceable(this, "loaded_chatters", (s) -> String.valueOf(MyLoader.getInstance().getLoaded().size())).register();
         new IdentifiedReplaceable(this, "loaded_channels", (s) -> String.valueOf(StreamlineMessaging.getChatChannelConfig().getChatChannels().size())).register();
         new IdentifiedReplaceable(this, "default_channel", (s) -> StreamlineMessaging.getConfigs().defaultChat()).register();
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("channel_") + "(.*?)", 1, (s, u) -> {
-            SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
+            SavableChatter chatter = MyLoader.getInstance().getOrCreate(u.getUuid());
             String string = startsWithChannel(s.get(), chatter);
             return string == null ? s.string() : string;
         }).register();
 
         new IdentifiedUserReplaceable(this, MatcherUtils.makeLiteral("friends_with_") + "(.*?)", 1, (s, u) -> {
-            SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
+            SavableChatter chatter = MyLoader.getInstance().getOrCreate(u.getUuid());
             String string = startsWithFriendsWith(s.get(), chatter);
             return string == null ? s.string() : string;
         }).register();
 
         new IdentifiedUserReplaceable(this, "friend_invites_enabled", (s, u) -> {
-            SavableChatter chatter = ChatterManager.getOrGetChatter(u.getUuid());
+            SavableChatter chatter = MyLoader.getInstance().getOrCreate(u.getUuid());
 
             return chatter.isAcceptingFriendRequests() ?
                     MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
@@ -48,7 +49,7 @@ public class MessagingExpansion extends RATExpansion {
     public String startsWithFriendsWith(String s, SavableChatter chatter) {
         String uuid = ModuleUtils.getUUIDFromName(s).orElse(null);
         if (uuid == null) return "";
-        SavableChatter otherChatter = ChatterManager.getOrGetChatter(uuid);
+        SavableChatter otherChatter = MyLoader.getInstance().getOrCreate(uuid);
         return chatter.isMyBestFriend(otherChatter) ?
                 MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_TRUE.get() :
                 MainMessagesHandler.MESSAGES.DEFAULTS.PLACEHOLDERS.IS_FALSE.get();

@@ -1,5 +1,6 @@
 package host.plas.commands;
 
+import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
@@ -33,25 +34,25 @@ public class MessageCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender StreamSender, String[] strings) {
+    public void run(StreamSender streamSender, String[] strings) {
         if (strings.length < 2) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
 
         String username = strings[0];
 
-        StreamSender other = UserUtils.getOrGetSender(username).orElse(null);
+        StreamSender other = UserUtils.getOrCreateSenderByName(username).orElse(null);
         if (other == null) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
 
         String message = ModuleUtils.argsToStringMinus(strings, 0);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamSender.getUuid());
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(streamSender.getUuid());
         if (chatter == null) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
             return;
         }
         chatter.onMessage(other, message, messageSender, messageRecipient);

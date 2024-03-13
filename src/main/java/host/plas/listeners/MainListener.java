@@ -1,5 +1,6 @@
 package host.plas.listeners;
 
+import host.plas.database.MyLoader;
 import net.streamline.api.events.server.LoginCompletedEvent;
 import net.streamline.api.events.server.StreamlineChatEvent;
 import net.streamline.api.modules.ModuleUtils;
@@ -23,10 +24,10 @@ public class MainListener implements BaseEventListener {
 
         AtomicBoolean handled = new AtomicBoolean(false);
         StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((s, chatChannel) -> {
-            if (! ModuleUtils.hasPermission(event.getSender(), chatChannel.getAccessPermission())) return;
+            if (! event.getSender().hasPermission(chatChannel.getAccessPermission())) return;
             if (chatChannel.getIdentifier().equals("none")) return;
             if (handled.get()) return;
-            if (chatChannel.getPrefix().equals("")) return;
+            if (chatChannel.getPrefix().isEmpty()) return;
             if (! event.getMessage().startsWith(chatChannel.getPrefix())) return;
 
             String message = event.getMessage().substring(chatChannel.getPrefix().length());
@@ -39,17 +40,18 @@ public class MainListener implements BaseEventListener {
             return;
         }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUuid());
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(event.getSender().getUuid());
+        if (chatter == null) return;
         event.setCanceled(chatter.onChannelMessage(event));
     }
 
     @BaseProcessor
     public void onJoin(LoginCompletedEvent event) {
-        SavableChatter chatter = ChatterManager.getOrGetChatter(event.getSender().getUuid());
-//        ChatterManager.getChatterFromDatabase(chatter);
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(event.getSender().getUuid());
+        if (chatter == null) return;
 
         if (StreamlineMessaging.getConfigs().forceDefaultOnJoin()) {
-            ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannels().get(StreamlineMessaging.getConfigs().defaultChat());
+            ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannel(StreamlineMessaging.getConfigs().defaultChat());
             if (channel == null) return;
             chatter.setCurrentChatChannel(channel);
         }

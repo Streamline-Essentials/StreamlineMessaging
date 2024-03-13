@@ -1,5 +1,6 @@
 package host.plas.commands;
 
+import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
@@ -40,12 +41,12 @@ public class ReplyCommand extends ModuleCommand {
         }
         String message = ModuleUtils.argsToString(strings);
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(StreamSender.getUuid());
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(StreamSender.getUuid());
         if (chatter == null) {
             ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
             return;
         }
-        StreamSender other = UserUtils.getOrGetSender(chatter.getReplyTo()).orElse(null);
+        StreamSender other = UserUtils.getOrCreateSenderByName(chatter.getReplyTo()).orElse(null);
         if (other == null) {
             ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;

@@ -1,5 +1,6 @@
 package host.plas.commands;
 
+import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
@@ -32,27 +33,27 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender StreamSender, String[] strings) {
+    public void run(StreamSender streamSender, String[] strings) {
         try {
             String identifier;
             if (strings[0].equals("")) {
                 identifier = "none";
             } else if (strings.length > 1) {
-                ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
+                ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_MANY.get());
                 return;
             } else {
                 identifier = strings[0];
             }
 
-            SavableChatter chatter = ChatterManager.getOrGetChatter(StreamSender.getUuid());
+            SavableChatter chatter = MyLoader.getInstance().getOrCreate(streamSender.getUuid());
             if (chatter == null) {
-                ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+                ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
                 return;
             }
 
             ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannel(identifier);
             if (channel == null) {
-                ModuleUtils.sendMessage(StreamSender, messageResultFailure
+                ModuleUtils.sendMessage(streamSender, messageResultFailure
                         .replace("%this_identifier%", identifier));
                 return;
             }
@@ -60,17 +61,17 @@ public class ChannelCommand extends ModuleCommand {
             chatter.setCurrentChatChannel(channel);
 
             if (chatter.getCurrentChatChannel().getIdentifier().equals(identifier)) {
-                ModuleUtils.sendMessage(StreamSender, messageResultSuccess
+                ModuleUtils.sendMessage(streamSender, messageResultSuccess
                         .replace("%this_identifier%", identifier)
                 );
             } else {
-                ModuleUtils.sendMessage(StreamSender, messageResultFailure
+                ModuleUtils.sendMessage(streamSender, messageResultFailure
                         .replace("%this_identifier%", identifier)
                 );
             }
         } catch (Exception e) {
             e.printStackTrace();
-            StreamSender.sendMessage(MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TYPE_DEFAULT.get());
+            streamSender.sendMessage(MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TYPE_DEFAULT.get());
         }
     }
 

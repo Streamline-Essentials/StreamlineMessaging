@@ -1,5 +1,6 @@
 package host.plas.commands;
 
+import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
 import net.streamline.api.command.ModuleCommand;
@@ -83,7 +84,7 @@ public class FriendCommand extends ModuleCommand {
             action = strings[0];
         }
 
-        SavableChatter chatter = ChatterManager.getOrGetChatter(streamSender.getUuid());
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(streamSender.getUuid());
         if (chatter == null) {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
             return;
@@ -114,13 +115,13 @@ public class FriendCommand extends ModuleCommand {
                         return;
                     }
 
-                    StreamSender other = UserUtils.getOrGetUserByName(strings[2]).orElse(null);
+                    StreamSender other = UserUtils.getOrCreateSenderByName(strings[2]).orElse(null);
                     if (other == null) {
                         ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                         return;
                     }
 
-                    chatter = ChatterManager.getOrGetChatter(other);
+                    chatter = MyLoader.getInstance().getOrCreate(other.getUuid());
 
                     String p = chatter.getFriendsListPaged().get(page - 1);
 
@@ -158,13 +159,13 @@ public class FriendCommand extends ModuleCommand {
                     return;
                 }
 
-                StreamSender other = UserUtils.getOrGetUserByName(username).orElse(null);
+                StreamSender other = UserUtils.getOrCreateSender(username);
                 if (other == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
-                SavableChatter otherChatter = ChatterManager.getOrGetChatter(other.getUuid());
+                SavableChatter otherChatter = MyLoader.getInstance().getOrCreate(other.getUuid());
                 if (otherChatter == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -208,13 +209,13 @@ public class FriendCommand extends ModuleCommand {
                     return;
                 }
 
-                StreamSender otherRemove = UserUtils.getOrGetUserByName(usernameRemove).orElse(null);
+                StreamSender otherRemove = UserUtils.getOrCreateSender(usernameRemove);
                 if (otherRemove == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
-                SavableChatter otherChatterRemove = ChatterManager.getOrGetChatter(otherRemove.getUuid());
+                SavableChatter otherChatterRemove = MyLoader.getInstance().getOrCreate(otherRemove.getUuid());
                 if (otherChatterRemove == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -253,7 +254,7 @@ public class FriendCommand extends ModuleCommand {
                 }
 
                 String usernameTeleport = strings[1];
-                StreamSender otherTeleport = UserUtils.getOrGetUserByName(usernameTeleport).orElse(null);
+                StreamSender otherTeleport = UserUtils.getOrCreateSender(usernameTeleport);
                 if (otherTeleport == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -275,13 +276,13 @@ public class FriendCommand extends ModuleCommand {
                 }
 
                 String usernameBest = strings[1];
-                StreamSender otherBest = UserUtils.getOrGetUserByName(usernameBest).orElse(null);
+                StreamSender otherBest = UserUtils.getOrCreateSender(usernameBest);
                 if (otherBest == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
                 }
 
-                SavableChatter otherChatterBest = ChatterManager.getOrGetChatter(otherBest.getUuid());
+                SavableChatter otherChatterBest = MyLoader.getInstance().getOrCreate(otherBest.getUuid());
                 if (otherChatterBest == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
