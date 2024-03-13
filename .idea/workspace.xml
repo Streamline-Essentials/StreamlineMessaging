@@ -4,24 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Minor fixes.">
-      <change afterPath="$PROJECT_DIR$/impl/StreamlineCore-API.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/host/plas/database/MyLoader.java" afterDir="false" />
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Version 1.11">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/StreamlineMessaging.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/StreamlineMessaging.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/commands/ChannelCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/ChannelCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/commands/FriendCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/FriendCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/commands/MessageCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/MessageCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/commands/ReplyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/commands/ReplyCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/database/Keeper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/database/Keeper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/listeners/MainListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/listeners/MainListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/ratapi/MessagingExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/ratapi/MessagingExpansion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/savables/ChatterManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/savables/ChatterManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/savables/SavableChatter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/timers/ChatterSaver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/timers/ChatterSaver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/timers/ChatterSyncer.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +176,7 @@
       <workItem from="1707881589652" duration="1667000" />
       <workItem from="1707970155267" duration="2001000" />
       <workItem from="1710024381072" duration="11623000" />
-      <workItem from="1710156565977" duration="4214000" />
+      <workItem from="1710156565977" duration="5337000" />
     </task>
     <task id="LOCAL-00001" summary="Update : 1.0">
       <created>1658559624570</created>
@@ -458,7 +442,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710063263418</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Version 1.11">
+      <option name="closed" value="true" />
+      <created>1710322702307</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1710322702307</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -477,7 +469,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="???" />
     <MESSAGE value="Update : Version Bump + Friends!" />
     <MESSAGE value="Fix : Actually apply the Friend command." />
     <MESSAGE value="Fix : Minor touch-ups." />
@@ -502,7 +493,8 @@
     <MESSAGE value="Gradle stuff" />
     <MESSAGE value="Updated API." />
     <MESSAGE value="Minor fixes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes." />
+    <MESSAGE value="Version 1.11" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version 1.11" />
   </component>
   <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
     <option name="sizePresets">

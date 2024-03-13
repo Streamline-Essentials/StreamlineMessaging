@@ -34,28 +34,28 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender StreamSender, String[] strings) {
+    public void run(StreamSender streamSender, String[] strings) {
         if (strings[0].isEmpty()) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
         }
         String message = ModuleUtils.argsToString(strings);
 
-        SavableChatter chatter = MyLoader.getInstance().getOrCreate(StreamSender.getUuid());
+        SavableChatter chatter = MyLoader.getInstance().getOrCreate(streamSender.getUuid());
         if (chatter == null) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
             return;
         }
-        StreamSender other = UserUtils.getOrCreateSenderByName(chatter.getReplyTo()).orElse(null);
+        StreamSender other = UserUtils.getOrCreateSender(chatter.getReplyTo());
         if (other == null) {
-            ModuleUtils.sendMessage(StreamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
+            ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
         }
         chatter.onReply(other, message, messageSender, messageRecipient);
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(StreamSender streamSender, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }
