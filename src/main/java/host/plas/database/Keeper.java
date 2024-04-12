@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Keeper extends DBKeeper<SavableChatter> {
     public Keeper() {
-        super("utilities_users", SavableChatter::new);
+        super("chatters", SavableChatter::new);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Keeper extends DBKeeper<SavableChatter> {
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-        getDatabase().execute(statement);
+        getDatabase().execute(statement, smt -> {});
     }
 
     @Override
@@ -108,7 +108,7 @@ public class Keeper extends DBKeeper<SavableChatter> {
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-        getDatabase().execute(statement);
+        getDatabase().execute(statement, smt -> {});
     }
 
     @Override
@@ -116,121 +116,158 @@ public class Keeper extends DBKeeper<SavableChatter> {
         String statement = "INSERT INTO `%table_prefix%chatter_main` " +
                 "(`Uuid`, `CurrentChannel`, `ReplyToUuid`, `LastMessage`, `LastMessageSent`, `LastMessageReceived`, `AcceptingFriendRequests`) " +
                 "VALUES " +
-                "( '%uuid%', '%currentChannel%', '%replyToUuid%', '%lastMessage%', '%lastMessageSent%', '%lastMessageReceived%', %acceptingFriendRequests% )" +
+                "( ?, ?, ?, ?, ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`CurrentChannel` = '%currentChannel%', " +
-                "`ReplyToUuid` = '%replyToUuid%', " +
-                "`LastMessage` = '%lastMessage%', " +
-                "`LastMessageSent` = '%lastMessageSent%', " +
-                "`LastMessageReceived` = '%lastMessageReceived%', " +
-                "`AcceptingFriendRequests` = %acceptingFriendRequests%;";
+                "`CurrentChannel` = ?, " +
+                "`ReplyToUuid` = ?, " +
+                "`LastMessage` = ?, " +
+                "`LastMessageSent` = ?, " +
+                "`LastMessageReceived` = ?, " +
+                "`AcceptingFriendRequests` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-        statement = statement.replace("%uuid%", obj.getUuid());
-        statement = statement.replace("%currentChannel%", obj.getCurrentChatChannel().getIdentifier());
-        statement = statement.replace("%replyToUuid%", obj.getReplyTo());
-        statement = statement.replace("%lastMessage%", obj.getLastMessage());
-        statement = statement.replace("%lastMessageSent%", obj.getLastMessageSent());
-        statement = statement.replace("%lastMessageReceived%", obj.getLastMessageReceived());
-        statement = statement.replace("%acceptingFriendRequests%", obj.isAcceptingFriendRequests() ? "1" : "0");
+        getDatabase().execute(statement, stmt -> {
+            try {
+                stmt.setString(1, obj.getUuid());
+                stmt.setString(2, obj.getCurrentChatChannel().getIdentifier());
+                stmt.setString(3, obj.getReplyTo());
+                stmt.setString(4, obj.getLastMessage());
+                stmt.setString(5, obj.getLastMessageSent());
+                stmt.setString(6, obj.getLastMessageReceived());
+                stmt.setBoolean(7, obj.isAcceptingFriendRequests());
 
-        getDatabase().execute(statement);
+                stmt.setString(8, obj.getCurrentChatChannel().getIdentifier());
+                stmt.setString(9, obj.getReplyTo());
+                stmt.setString(10, obj.getLastMessage());
+                stmt.setString(11, obj.getLastMessageSent());
+                stmt.setString(12, obj.getLastMessageReceived());
+                stmt.setBoolean(13, obj.isAcceptingFriendRequests());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         statement = "INSERT INTO `%table_prefix%channel_views` " +
                 "(`Uuid`, `Channel`, `Viewed`) " +
                 "VALUES " +
-                "( '%uuid%', '%channel%', '%viewed%' )" +
+                "( ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`Channel` = '%channel%', " +
-                "`Viewed` = %viewed%;";
+                "`Channel` = ?, " +
+                "`Viewed` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement = statement;
         obj.getViewing().forEach((channel, viewed) -> {
-            String s = finalStatement;
-            s = s.replace("%uuid%", obj.getUuid());
-            s = s.replace("%channel%", channel.getIdentifier());
-            s = s.replace("%viewed%", viewed ? "1" : "0");
+            getDatabase().execute(finalStatement, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, channel.getIdentifier());
+                    stmt.setBoolean(3, viewed);
 
-            getDatabase().execute(s);
+                    stmt.setString(4, channel.getIdentifier());
+                    stmt.setBoolean(5, viewed);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT INTO `%table_prefix%chatter_friends` " +
                 "(`PlayerUuid`, `FriendUuid`, `DateAccepted`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %dateAccepted% )" +
+                "( ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`DateAccepted` = %dateAccepted%;";
+                "`DateAccepted` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement1 = statement;
         obj.getFriends().forEach((date, friend) -> {
-            String s = finalStatement1;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", friend);
-            s = s.replace("%dateAccepted%", String.valueOf(date.getTime()));
+            getDatabase().execute(finalStatement1, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, friend);
+                    stmt.setLong(3, date.getTime());
 
-            getDatabase().execute(s);
+                    stmt.setLong(4, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT INTO `%table_prefix%chatter_ignores` " +
                 "(`PlayerUuid`, `IgnoreUuid`, `DateIgnored`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%ignoreUuid%', %dateIgnored% )" +
+                "( ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`DateIgnored` = %dateIgnored%;";
+                "`DateIgnored` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement2 = statement;
         obj.getIgnoring().forEach((date, ignore) -> {
-            String s = finalStatement2;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%ignoreUuid%", ignore);
-            s = s.replace("%dateIgnored%", String.valueOf(date.getTime()));
+            getDatabase().execute(finalStatement2, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, ignore);
+                    stmt.setLong(3, date.getTime());
 
-            getDatabase().execute(s);
+                    stmt.setLong(4, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT INTO `%table_prefix%friend_invites` " +
                 "(`PlayerUuid`, `FriendUuid`, `TicksLeft`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %ticksLeft% )" +
+                "( ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`TicksLeft` = %ticksLeft%;";
+                "`TicksLeft` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement3 = statement;
         obj.getFriendInvites().forEach((date, invite) -> {
-            String s = finalStatement3;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", invite.getInvited().getUuid());
-            s = s.replace("%ticksLeft%", String.valueOf(invite.getTicksLeft()));
+            getDatabase().execute(finalStatement3, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, invite.getInvited().getUuid());
+                    stmt.setLong(3, invite.getTicksLeft());
 
-            getDatabase().execute(s);
+                    stmt.setLong(4, invite.getTicksLeft());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT INTO `%table_prefix%best_friends` " +
                 "(`PlayerUuid`, `FriendUuid`, `DateSet`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %dateSet% )" +
+                "( ?, ?, ? )" +
                 "ON DUPLICATE KEY UPDATE " +
-                "`DateSet` = %dateSet%;";
+                "`DateSet` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement4 = statement;
         obj.getBestFriends().forEach((date, bestFriend) -> {
-            String s = finalStatement4;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", bestFriend);
-            s = s.replace("%dateSet%", String.valueOf(date.getTime()));
+            getDatabase().execute(finalStatement4, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, bestFriend);
+                    stmt.setLong(3, date.getTime());
 
-            getDatabase().execute(s);
+                    stmt.setLong(4, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
 
@@ -239,260 +276,148 @@ public class Keeper extends DBKeeper<SavableChatter> {
         String statement = "INSERT OR REPLACE INTO `%table_prefix%chatter_main` " +
                 "(`Uuid`, `CurrentChannel`, `ReplyToUuid`, `LastMessage`, `LastMessageSent`, `LastMessageReceived`, `AcceptingFriendRequests`) " +
                 "VALUES " +
-                "( '%uuid%', '%currentChannel%', '%replyToUuid%', '%lastMessage%', '%lastMessageSent%', '%lastMessageReceived%', %acceptingFriendRequests% );";
+                "( ?, ?, ?, ?, ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-        statement = statement.replace("%uuid%", obj.getUuid());
-        statement = statement.replace("%currentChannel%", obj.getCurrentChatChannel().getIdentifier());
-        statement = statement.replace("%replyToUuid%", obj.getReplyTo());
-        statement = statement.replace("%lastMessage%", obj.getLastMessage());
-        statement = statement.replace("%lastMessageSent%", obj.getLastMessageSent());
-        statement = statement.replace("%lastMessageReceived%", obj.getLastMessageReceived());
-        statement = statement.replace("%acceptingFriendRequests%", obj.isAcceptingFriendRequests() ? "1" : "0");
-
-        getDatabase().execute(statement);
+        getDatabase().execute(statement, stmt -> {
+            try {
+                stmt.setString(1, obj.getUuid());
+                stmt.setString(2, obj.getCurrentChatChannel().getIdentifier());
+                stmt.setString(3, obj.getReplyTo());
+                stmt.setString(4, obj.getLastMessage());
+                stmt.setString(5, obj.getLastMessageSent());
+                stmt.setString(6, obj.getLastMessageReceived());
+                stmt.setBoolean(7, obj.isAcceptingFriendRequests());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         statement = "INSERT OR REPLACE INTO `%table_prefix%channel_views` " +
                 "(`Uuid`, `Channel`, `Viewed`) " +
                 "VALUES " +
-                "( '%uuid%', '%channel%', '%viewed%' );";
+                "( ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement = statement;
         obj.getViewing().forEach((channel, viewed) -> {
-            String s = finalStatement;
-            s = s.replace("%uuid%", obj.getUuid());
-            s = s.replace("%channel%", channel.getIdentifier());
-            s = s.replace("%viewed%", viewed ? "1" : "0");
-
-            getDatabase().execute(s);
+            getDatabase().execute(finalStatement, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, channel.getIdentifier());
+                    stmt.setBoolean(3, viewed);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT OR REPLACE INTO `%table_prefix%chatter_friends` " +
                 "(`PlayerUuid`, `FriendUuid`, `DateAccepted`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %dateAccepted% );";
+                "( ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement1 = statement;
         obj.getFriends().forEach((date, friend) -> {
-            String s = finalStatement1;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", friend);
-            s = s.replace("%dateAccepted%", String.valueOf(date.getTime()));
-
-            getDatabase().execute(s);
+            getDatabase().execute(finalStatement1, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, friend);
+                    stmt.setLong(3, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT OR REPLACE INTO `%table_prefix%chatter_ignores` " +
                 "(`PlayerUuid`, `IgnoreUuid`, `DateIgnored`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%ignoreUuid%', %dateIgnored% );";
+                "( ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement2 = statement;
         obj.getIgnoring().forEach((date, ignore) -> {
-            String s = finalStatement2;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%ignoreUuid%", ignore);
-            s = s.replace("%dateIgnored%", String.valueOf(date.getTime()));
-
-            getDatabase().execute(s);
+            getDatabase().execute(finalStatement2, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, ignore);
+                    stmt.setLong(3, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT OR REPLACE INTO `%table_prefix%friend_invites` " +
                 "(`PlayerUuid`, `FriendUuid`, `TicksLeft`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %ticksLeft% );";
+                "( ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement3 = statement;
         obj.getFriendInvites().forEach((date, invite) -> {
-            String s = finalStatement3;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", invite.getInvited().getUuid());
-            s = s.replace("%ticksLeft%", String.valueOf(invite.getTicksLeft()));
-
-            getDatabase().execute(s);
+            getDatabase().execute(finalStatement3, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, invite.getInvited().getUuid());
+                    stmt.setLong(3, invite.getTicksLeft());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
 
         statement = "INSERT OR REPLACE INTO `%table_prefix%best_friends` " +
                 "(`PlayerUuid`, `FriendUuid`, `DateSet`) " +
                 "VALUES " +
-                "( '%playerUuid%', '%friendUuid%', %dateSet% );";
+                "( ?, ?, ? );";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         String finalStatement4 = statement;
         obj.getBestFriends().forEach((date, bestFriend) -> {
-            String s = finalStatement4;
-            s = s.replace("%playerUuid%", obj.getUuid());
-            s = s.replace("%friendUuid%", bestFriend);
-            s = s.replace("%dateSet%", String.valueOf(date.getTime()));
-
-            getDatabase().execute(s);
+            getDatabase().execute(finalStatement4, stmt -> {
+                try {
+                    stmt.setString(1, obj.getUuid());
+                    stmt.setString(2, bestFriend);
+                    stmt.setLong(3, date.getTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
 
     @Override
     public Optional<SavableChatter> loadMysql(String identifier) {
-        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `uuid` = '%uuid%';";
-
-        statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-        statement = statement.replace("%uuid%", identifier);
-
-        AtomicReference<Optional<SavableChatter>> user = new AtomicReference<>(Optional.empty());
-        getDatabase().executeQuery(statement, (result) -> {
-            try {
-                if (result.next()) {
-                    String uuid = result.getString("Uuid");
-                    String currentChannel = result.getString("CurrentChannel");
-                    String replyToUuid = result.getString("ReplyToUuid");
-                    String lastMessage = result.getString("LastMessage");
-                    String lastMessageSent = result.getString("LastMessageSent");
-                    String lastMessageReceived = result.getString("LastMessageReceived");
-                    boolean acceptingFriendRequests = result.getBoolean("AcceptingFriendRequests");
-
-                    SavableChatter u = new SavableChatter(uuid);
-                    ConfiguredChatChannel channel = StreamlineMessaging.getChatChannelConfig().getChatChannel(currentChannel);
-                    if (channel != null) u.setCurrentChatChannel(channel);
-
-                    u.setReplyTo(replyToUuid);
-                    u.setLastMessage(lastMessage);
-                    u.setLastMessageSent(lastMessageSent);
-                    u.setLastMessageReceived(lastMessageReceived);
-                    u.setAcceptingFriendRequests(acceptingFriendRequests);
-
-                    user.set(Optional.of(u));
-                }
-
-                result.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        user.get().ifPresent((u) -> {
-            String statement1 = "SELECT * FROM `%table_prefix%channel_views` WHERE `uuid` = '%uuid%';";
-
-            statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%uuid%", identifier);
-
-            getDatabase().executeQuery(statement1, (result) -> {
-                try {
-                    while (result.next()) {
-                        String channel = result.getString("Channel");
-                        boolean viewed = result.getBoolean("Viewed");
-
-                        u.setViewed(channel, viewed);
-                    }
-
-                    result.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-            statement1 = "SELECT * FROM `%table_prefix%chatter_friends` WHERE `PlayerUuid` = '%playerUuid%';";
-
-            statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%playerUuid%", identifier);
-
-            getDatabase().executeQuery(statement1, (result) -> {
-                try {
-                    while (result.next()) {
-                        String friendUuid = result.getString("FriendUuid");
-                        long dateAccepted = result.getLong("DateAccepted");
-
-                        u.setFriended(dateAccepted, friendUuid);
-                    }
-
-                    result.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-            statement1 = "SELECT * FROM `%table_prefix%chatter_ignores` WHERE `PlayerUuid` = '%playerUuid%';";
-
-            statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%playerUuid%", identifier);
-
-            getDatabase().executeQuery(statement1, (result) -> {
-                try {
-                    while (result.next()) {
-                        String ignoreUuid = result.getString("IgnoreUuid");
-                        long dateIgnored = result.getLong("DateIgnored");
-
-                        u.setIgnored(dateIgnored, ignoreUuid);
-                    }
-
-                    result.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-            statement1 = "SELECT * FROM `%table_prefix%friend_invites` WHERE `PlayerUuid` = '%playerUuid%';";
-
-            statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%playerUuid%", identifier);
-
-            getDatabase().executeQuery(statement1, (result) -> {
-                try {
-                    while (result.next()) {
-                        String friendUuid = result.getString("FriendUuid");
-                        long ticksLeft = result.getLong("TicksLeft");
-
-                        u.setInviteSent(ticksLeft, friendUuid);
-                    }
-
-                    result.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-            statement1 = "SELECT * FROM `%table_prefix%best_friends` WHERE `PlayerUuid` = '%player_uuid%';";
-
-            statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%player_uuid%", identifier);
-
-            getDatabase().executeQuery(statement1, (result) -> {
-                try {
-                    while (result.next()) {
-                        String friendUuid = result.getString("FriendUuid");
-                        long dateSet = result.getLong("DateSet");
-
-                        u.setBestFriended(dateSet, friendUuid);
-                    }
-
-                    result.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-            user.set(Optional.of(u));
-        });
-
-        return user.get();
+        return loadBoth(identifier);
     }
 
     @Override
     public Optional<SavableChatter> loadSqlite(String identifier) {
-        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `uuid` = '%uuid%';";
+        return loadBoth(identifier);
+    }
+
+    public Optional<SavableChatter> loadBoth(String identifier) {
+        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `Uuid` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-        statement = statement.replace("%uuid%", identifier);
 
         AtomicReference<Optional<SavableChatter>> user = new AtomicReference<>(Optional.empty());
-        getDatabase().executeQuery(statement, (result) -> {
+        getDatabase().executeQuery(statement, stmt -> {
+            try {
+                stmt.setString(1, identifier);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, (result) -> {
             try {
                 if (result.next()) {
                     String uuid = result.getString("Uuid");
@@ -523,12 +448,17 @@ public class Keeper extends DBKeeper<SavableChatter> {
         });
 
         user.get().ifPresent((u) -> {
-            String statement1 = "SELECT * FROM `%table_prefix%channel_views` WHERE `uuid` = '%uuid%';";
+            String statement1 = "SELECT * FROM `%table_prefix%channel_views` WHERE `Uuid` = ?;";
 
             statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%uuid%", identifier);
 
-            getDatabase().executeQuery(statement1, (result) -> {
+            getDatabase().executeQuery(statement1, stmt -> {
+                try {
+                    stmt.setString(1, identifier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, (result) -> {
                 try {
                     while (result.next()) {
                         String channel = result.getString("Channel");
@@ -543,12 +473,17 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 }
             });
 
-            statement1 = "SELECT * FROM `%table_prefix%chatter_friends` WHERE `PlayerUuid` = '%playerUuid%';";
+            statement1 = "SELECT * FROM `%table_prefix%chatter_friends` WHERE `PlayerUuid` = ?;";
 
             statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-            statement1 = statement1.replace("%playerUuid%", identifier);
 
-            getDatabase().executeQuery(statement1, (result) -> {
+            getDatabase().executeQuery(statement1, stmt -> {
+                try {
+                    stmt.setString(1, identifier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, (result) -> {
                 try {
                     while (result.next()) {
                         String friendUuid = result.getString("FriendUuid");
@@ -563,10 +498,16 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 }
             });
 
-            statement1 = "SELECT * FROM `%table_prefix%chatter_ignores` WHERE `PlayerUuid` = '%playerUuid%';";
+            statement1 = "SELECT * FROM `%table_prefix%chatter_ignores` WHERE `PlayerUuid` = ?;";
             statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-            getDatabase().executeQuery(statement1, (result) -> {
+            getDatabase().executeQuery(statement1, stmt -> {
+                try {
+                    stmt.setString(1, identifier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, (result) -> {
                 try {
                     while (result.next()) {
                         String ignoreUuid = result.getString("IgnoreUuid");
@@ -581,10 +522,16 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 }
             });
 
-            statement1 = "SELECT * FROM `%table_prefix%friend_invites` WHERE `PlayerUuid` = '%playerUuid%';";
+            statement1 = "SELECT * FROM `%table_prefix%friend_invites` WHERE `PlayerUuid` = ?;";
             statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-            getDatabase().executeQuery(statement1, (result) -> {
+            getDatabase().executeQuery(statement1, stmt -> {
+                try {
+                    stmt.setString(1, identifier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, (result) -> {
                 try {
                     while (result.next()) {
                         String friendUuid = result.getString("FriendUuid");
@@ -599,10 +546,16 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 }
             });
 
-            statement1 = "SELECT * FROM `%table_prefix%best_friends` WHERE `PlayerUuid` = '%player_uuid%';";
+            statement1 = "SELECT * FROM `%table_prefix%best_friends` WHERE `PlayerUuid` = ?;";
             statement1 = statement1.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
-            getDatabase().executeQuery(statement1, (result) -> {
+            getDatabase().executeQuery(statement1, stmt -> {
+                try {
+                    stmt.setString(1, identifier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, (result) -> {
                 try {
                     while (result.next()) {
                         String friendUuid = result.getString("FriendUuid");
@@ -625,33 +578,27 @@ public class Keeper extends DBKeeper<SavableChatter> {
 
     @Override
     public boolean existsMysql(String identifier) {
-        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `uuid` = '%uuid%';";
-
-        statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-        statement = statement.replace("%uuid%", identifier);
-
-        AtomicReference<Boolean> exists = new AtomicReference<>(false);
-        getDatabase().executeQuery(statement, (result) -> {
-            try {
-                exists.set(result.next());
-                result.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        return exists.get();
+        return existsBoth(identifier);
     }
 
     @Override
     public boolean existsSqlite(String identifier) {
-        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `uuid` = '%uuid%';";
+        return existsBoth(identifier);
+    }
+
+    public boolean existsBoth(String identifier) {
+        String statement = "SELECT * FROM `%table_prefix%chatter_main` WHERE `uuid` = ?;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-        statement = statement.replace("%uuid%", identifier);
 
         AtomicReference<Boolean> exists = new AtomicReference<>(false);
-        getDatabase().executeQuery(statement, (result) -> {
+        getDatabase().executeQuery(statement, stmt -> {
+            try {
+                stmt.setString(1, identifier);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, (result) -> {
             try {
                 exists.set(result.next());
                 result.close();
@@ -672,40 +619,20 @@ public class Keeper extends DBKeeper<SavableChatter> {
     }
 
     public CompletableFuture<ConcurrentSkipListSet<SavableChatter>> pullAllChattersMySql() {
-        String statement = "SELECT `Uuid` FROM `%table_prefix%chatter_main`;";
-
-        statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
-
-        ConcurrentSkipListSet<String> uuids = new ConcurrentSkipListSet<>();
-        getDatabase().executeQuery(statement, (result) -> {
-            try {
-                while (result.next()) {
-                    String uuid = result.getString("Uuid");
-
-                    uuids.add(uuid);
-                }
-
-                result.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        AtomicReference<ConcurrentSkipListSet<SavableChatter>> chatters = new AtomicReference<>(new ConcurrentSkipListSet<>());
-        uuids.forEach((uuid) -> {
-            load(uuid).join().ifPresent(chatters.get()::add);
-        });
-
-        return CompletableFuture.completedFuture(chatters.get());
+        return pullAllChattersBoth();
     }
 
     public CompletableFuture<ConcurrentSkipListSet<SavableChatter>> pullAllChattersSqlite() {
+        return pullAllChattersBoth();
+    }
+
+    public CompletableFuture<ConcurrentSkipListSet<SavableChatter>> pullAllChattersBoth() {
         String statement = "SELECT `Uuid` FROM `%table_prefix%chatter_main`;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
         ConcurrentSkipListSet<String> uuids = new ConcurrentSkipListSet<>();
-        getDatabase().executeQuery(statement, (result) -> {
+        getDatabase().executeQuery(statement, stmt -> {}, (result) -> {
             try {
                 while (result.next()) {
                     String uuid = result.getString("Uuid");

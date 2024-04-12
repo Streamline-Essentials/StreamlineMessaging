@@ -13,11 +13,12 @@ import net.streamline.api.modules.ModuleUtils;
 import net.streamline.api.utils.UserUtils;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 @Getter @Setter
-public class SavableChatter implements Loadable {
+public class SavableChatter implements Loadable<SavableChatter> {
     private String identifier;
 
     public String getUuid() {
@@ -189,6 +190,29 @@ public class SavableChatter implements Loadable {
 
     public void save() {
         StreamlineMessaging.getKeeper().save(this);
+    }
+
+    @Override
+    public SavableChatter augment(CompletableFuture<Optional<SavableChatter>> completableFuture) {
+        CompletableFuture.runAsync(() -> {
+            Optional<SavableChatter> optional = completableFuture.join();
+            if (optional.isEmpty()) return;
+            SavableChatter user = optional.get();
+
+            this.currentChatChannel = user.currentChatChannel;
+            this.replyTo = user.replyTo;
+            this.lastMessage = user.lastMessage;
+            this.lastMessageSent = user.lastMessageSent;
+            this.lastMessageReceived = user.lastMessageReceived;
+            this.acceptingFriendRequests = user.acceptingFriendRequests;
+            this.viewing.putAll(user.viewing);
+            this.friends.putAll(user.friends);
+            this.ignoring.putAll(user.ignoring);
+            this.friendInvites.putAll(user.friendInvites);
+            this.bestFriends.putAll(user.bestFriends);
+        });
+
+        return this;
     }
 
     public StreamSender replyToAsUser() {

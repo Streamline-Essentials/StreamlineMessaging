@@ -65,9 +65,4 @@ public class MyLoader extends Loader<SavableChatter> {
     public void fireCreateEvents(SavableChatter savableChatter) {
 
     }
-
-    @Override
-    public SavableChatter augment(SavableChatter savableChatter) {
-        return savableChatter;
-    }
 }

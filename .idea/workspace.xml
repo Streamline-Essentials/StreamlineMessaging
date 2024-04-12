@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Version 1.11">
+    <list default="true" id="1718f174-1252-4787-8e30-3eea7f0904ea" name="Changes" comment="Fixed simple uuid issue with /reply">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/database/Keeper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/database/Keeper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/database/MyLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/database/MyLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/host/plas/savables/SavableChatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/host/plas/savables/SavableChatter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,11 +33,6 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="StreamlineMessaging" type="f1a62948:ProjectNode" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="StreamlineMessaging" type="f1a62948:ProjectNode" />
-                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -52,6 +50,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "MrDrakify"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Streamline-Essentials/StreamlineMessaging.git",
+    "accountId": "b9952c05-e03e-4201-9d5b-afd692b6f8f1"
+  }
+}]]></component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -83,7 +93,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/thesi/OneDrive/Development/Java/Streamline/Modules/StreamlineMessaging/impl&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/thesi/OneDrive/Development/Java/Streamline/Modules&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -137,6 +147,14 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -177,6 +195,13 @@
       <workItem from="1707970155267" duration="2001000" />
       <workItem from="1710024381072" duration="11623000" />
       <workItem from="1710156565977" duration="5337000" />
+      <workItem from="1710331747361" duration="693000" />
+      <workItem from="1710464157159" duration="595000" />
+      <workItem from="1710914240833" duration="3035000" />
+      <workItem from="1711053818994" duration="599000" />
+      <workItem from="1711153770866" duration="586000" />
+      <workItem from="1711472064399" duration="1624000" />
+      <workItem from="1712258698295" duration="607000" />
     </task>
     <task id="LOCAL-00001" summary="Update : 1.0">
       <created>1658559624570</created>
@@ -450,7 +475,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710322702307</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Fixed simple uuid issue with /reply">
+      <option name="closed" value="true" />
+      <created>1710331843561</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1710331843561</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -469,7 +502,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Update : Version Bump + Friends!" />
     <MESSAGE value="Fix : Actually apply the Friend command." />
     <MESSAGE value="Fix : Minor touch-ups." />
     <MESSAGE value="Fix : Index bug." />
@@ -494,7 +526,8 @@
     <MESSAGE value="Updated API." />
     <MESSAGE value="Minor fixes." />
     <MESSAGE value="Version 1.11" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version 1.11" />
+    <MESSAGE value="Fixed simple uuid issue with /reply" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed simple uuid issue with /reply" />
   </component>
   <component name="com.vaadin.designer2.intellij.settings.SizePresetsSettingsComponent">
     <option name="sizePresets">
