@@ -27,37 +27,42 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 "`LastMessageSent` TEXT NOT NULL, " +
                 "`LastMessageReceived` TEXT NOT NULL, " +
                 "`AcceptingFriendRequests` BIT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%channel_views` (" +
                 "`Id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                 "`Uuid` VARCHAR(36) NOT NULL, " +
                 "`Channel` TEXT NOT NULL, " +
                 "`Viewed` BIT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%chatter_friends` (" +
                 "`Id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                 "`PlayerUuid` VARCHAR(36) NOT NULL, " +
                 "`FriendUuid` VARCHAR(36) NOT NULL, " +
                 "`DateAccepted` INT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%chatter_ignores` (" +
                 "`Id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                 "`PlayerUuid` VARCHAR(36) NOT NULL, " +
                 "`IgnoreUuid` VARCHAR(36) NOT NULL, " +
                 "`DateIgnored` INT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%friend_invites` (" +
                 "`Id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                 "`PlayerUuid` VARCHAR(36) NOT NULL, " +
                 "`FriendUuid` VARCHAR(36) NOT NULL, " +
                 "`TicksLeft` INT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%best_friends` (" +
                 "`Id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                 "`PlayerUuid` VARCHAR(36) NOT NULL, " +
                 "`FriendUuid` VARCHAR(36) NOT NULL, " +
                 "`DateSet` INT NOT NULL " +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 
@@ -74,37 +79,42 @@ public class Keeper extends DBKeeper<SavableChatter> {
                 "`LastMessageSent` TEXT NOT NULL, " +
                 "`LastMessageReceived` TEXT NOT NULL, " +
                 "`AcceptingFriendRequests` BOOLEAN NOT NULL " +
-                ");" +
+                ");;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%channel_views` (" +
                 "`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "`Uuid` TEXT NOT NULL, " +
                 "`Channel` TEXT NOT NULL, " +
                 "`Viewed` BOOLEAN NOT NULL " +
-                ");" +
+                ");;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%chatter_friends` (" +
                 "`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "`PlayerUuid` TEXT NOT NULL, " +
                 "`FriendUuid` TEXT NOT NULL, " +
                 "`DateAccepted` INTEGER NOT NULL " +
-                ");" +
+                ");;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%chatter_ignores` (" +
                 "`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "`PlayerUuid` TEXT NOT NULL, " +
                 "`IgnoreUuid` TEXT NOT NULL, " +
                 "`DateIgnored` INTEGER NOT NULL " +
-                ");" +
+                ");;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%friend_invites` (" +
                 "`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "`PlayerUuid` TEXT NOT NULL, " +
                 "`FriendUuid` TEXT NOT NULL, " +
                 "`TicksLeft` INTEGER NOT NULL " +
-                ");" +
+                ");;" +
+
                 "CREATE TABLE IF NOT EXISTS `%table_prefix%best_friends` (" +
                 "`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "`PlayerUuid` TEXT NOT NULL, " +
                 "`FriendUuid` TEXT NOT NULL, " +
                 "`DateSet` INTEGER NOT NULL " +
-                ");";
+                ");;";
 
         statement = statement.replace("%table_prefix%", SLAPI.getMainDatabase().getConnectorSet().getTablePrefix());
 

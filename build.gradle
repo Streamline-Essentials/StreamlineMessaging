@@ -6,12 +6,38 @@ plugins {
 group properties['group']
 version properties['version']
 
+ext {
+    deps = ""
+    StringBuilder builder = new StringBuilder()
+
+    int i = 0
+    List<String> list = properties['pf.dependencies'].toString().split(", ")
+    for (String s : list) {
+        if (i == list.size() - 1) {
+            builder.append(s)
+        } else {
+            builder.append(s).append(", ")
+        }
+        i ++
+    }
+
+    deps = builder.toString()
+
+    needs_bapi = false
+
+    String include_bapi = rootProject.properties.get('include-bapi', "false");
+
+    if (include_bapi.toBoolean()) {
+        needs_bapi = true
+    }
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'https://oss.sonatype.org/content/repositories/central' }
-    maven { url 'https://jitpack.io' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/central/' }
+    maven { url 'https://jitpack.io/' }
 }
 
 dependencies {
@@ -23,12 +49,12 @@ dependencies {
     compileOnly 'net.luckperms:api:5.4'
 
     // StreamlineCore
-    compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
-    annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
+    compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
+    annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
 
-    if (properties['include-bapi']) {
-        compileOnly 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
-        annotationProcessor 'com.github.streamline-essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
+    if (rootProject.ext.needs_bapi) {
+        compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
+        annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
     }
 }
 
@@ -59,6 +85,6 @@ artifacts {
 }
 
 wrapper {
-    gradleVersion = '8.6'
+    gradleVersion = '8.9'
     distributionType = Wrapper.DistributionType.BIN
 }
