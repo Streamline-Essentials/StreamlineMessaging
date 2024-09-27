@@ -1,13 +1,13 @@
 package host.plas.ratapi;
 
 import host.plas.database.MyLoader;
-import net.streamline.api.configs.given.MainMessagesHandler;
-import net.streamline.api.data.console.StreamSender;
-import net.streamline.api.data.players.StreamPlayer;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.placeholders.expansions.RATExpansion;
-import net.streamline.api.placeholders.replaceables.IdentifiedReplaceable;
-import net.streamline.api.placeholders.replaceables.IdentifiedUserReplaceable;
+import singularity.configs.given.MainMessagesHandler;
+import singularity.data.console.CosmicSender;
+import singularity.data.players.CosmicPlayer;
+import singularity.modules.ModuleUtils;
+import singularity.placeholders.expansions.RATExpansion;
+import singularity.placeholders.replaceables.IdentifiedReplaceable;
+import singularity.placeholders.replaceables.IdentifiedUserReplaceable;
 import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
 import host.plas.savables.SavableChatter;

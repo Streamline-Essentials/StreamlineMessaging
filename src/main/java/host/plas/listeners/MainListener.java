@@ -1,9 +1,9 @@
 package host.plas.listeners;
 
 import host.plas.database.MyLoader;
-import net.streamline.api.events.server.LoginCompletedEvent;
-import net.streamline.api.events.server.StreamlineChatEvent;
-import net.streamline.api.modules.ModuleUtils;
+import singularity.events.server.LoginCompletedEvent;
+import singularity.events.server.CosmicChatEvent;
+import singularity.modules.ModuleUtils;
 import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
 import host.plas.savables.SavableChatter;
@@ -19,7 +19,7 @@ public class MainListener implements BaseEventListener {
     }
 
     @BaseProcessor(priority = BaseEventPriority.LOWEST)
-    public void onChat(StreamlineChatEvent event) {
+    public void onChat(CosmicChatEvent event) {
         if (event.isCanceled()) return;
 
         AtomicBoolean handled = new AtomicBoolean(false);

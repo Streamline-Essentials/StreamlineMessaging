@@ -3,7 +3,7 @@ package host.plas.timers;
 import host.plas.StreamlineMessaging;
 import host.plas.database.MyLoader;
 import host.plas.savables.SavableChatter;
-import net.streamline.api.scheduler.ModuleRunnable;
+import singularity.scheduler.ModuleRunnable;
 
 public class ChatterSaver extends ModuleRunnable {
     public ChatterSaver() {

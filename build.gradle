@@ -48,7 +48,7 @@ dependencies {
     // LuckPerms
     compileOnly 'net.luckperms:api:5.4'
 
-    // StreamlineCore
+    // CosmicCore
     compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
     annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
 

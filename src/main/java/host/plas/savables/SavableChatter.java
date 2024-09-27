@@ -6,11 +6,11 @@ import host.plas.database.MyLoader;
 import host.plas.timers.FriendInviteExpiry;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.data.console.StreamSender;
-import net.streamline.api.events.server.StreamlineChatEvent;
-import net.streamline.api.loading.Loadable;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.utils.UserUtils;
+import singularity.data.console.CosmicSender;
+import singularity.events.server.CosmicChatEvent;
+import singularity.loading.Loadable;
+import singularity.modules.ModuleUtils;
+import singularity.utils.UserUtils;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -215,15 +215,15 @@ public class SavableChatter implements Loadable<SavableChatter> {
         return this;
     }
 
-    public StreamSender replyToAsUser() {
+    public CosmicSender replyToAsUser() {
         return UserUtils.getOrCreateSender(getReplyTo());
     }
 
-    public StreamSender asUser() {
+    public CosmicSender asUser() {
         return UserUtils.getOrCreateSender(this.getUuid());
     }
 
-    public void onReply(StreamSender recipient, String message) {
+    public void onReply(CosmicSender recipient, String message) {
         SavableChatter other = MyLoader.getInstance().getOrCreate(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingReplyUpdateRecipient()) other.setReplyTo(this.getUuid());
@@ -231,7 +231,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         other.setLastMessageReceived(message);
     }
 
-    public void onReply(StreamSender recipient, String message, String senderFormat, String recipientFormat) {
+    public void onReply(CosmicSender recipient, String message, String senderFormat, String recipientFormat) {
         if (this.getUuid().equals(recipient.getUuid())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
@@ -249,7 +249,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         onReply(recipient, message);
     }
 
-    public void onMessage(StreamSender recipient, String message) {
+    public void onMessage(CosmicSender recipient, String message) {
         SavableChatter other = MyLoader.getInstance().getOrCreate(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateSender()) setReplyTo(recipient.getUuid());
         if (StreamlineMessaging.getConfigs().messagingMessageUpdateRecipient()) other.setReplyTo(this.getUuid());
@@ -257,7 +257,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         other.setLastMessageReceived(message);
     }
 
-    public void onMessage(StreamSender recipient, String message, String senderFormat, String recipientFormat) {
+    public void onMessage(CosmicSender recipient, String message, String senderFormat, String recipientFormat) {
         if (this.getUuid().equals(recipient.getUuid())) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsMessagingSelf());
             return;
@@ -275,7 +275,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         onMessage(recipient, message);
     }
 
-    public boolean onChannelMessage(StreamlineChatEvent event) {
+    public boolean onChannelMessage(CosmicChatEvent event) {
         if (getCurrentChatChannel() == null) {
             ModuleUtils.sendMessage(asUser(), StreamlineMessaging.getMessages().errorsChannelIsNull());
             return false;
@@ -313,7 +313,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
     }
 
     public boolean hasViewingPermission(ConfiguredChatChannel channel) {
-        StreamSender sender = asUser();
+        CosmicSender sender = asUser();
         if (sender == null) return false;
 
         return sender.hasPermission(channel.getViewingInfo().getPermission());
@@ -324,7 +324,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
     }
 
     public boolean canToggleViewing(ConfiguredChatChannel channel) {
-        StreamSender sender = asUser();
+        CosmicSender sender = asUser();
         if (sender == null) return false;
 
         return sender.hasPermission(channel.getViewingInfo().getTogglePermission());
@@ -406,7 +406,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         for (int i = start; i < getFriends().size(); i ++) {
             if (i >= start + StreamlineMessaging.getMessages().friendsListMaxPerPage()) continue;
             String uuid = new ArrayList<>(getFriends().values()).get(i);
-            StreamSender user = asUser();
+            CosmicSender user = asUser();
             if (user == null) return "";
             if (i == start + StreamlineMessaging.getMessages().friendsListMaxPerPage() - 1) {
                 builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().friendsListEntryLast()));
@@ -445,6 +445,8 @@ public class SavableChatter implements Loadable<SavableChatter> {
         ModuleUtils.sendMessage(expiry.getInvited().asUser(), StreamlineMessaging.getMessages().friendInviteTimeoutInvited()
                 .replace("%this_other%", asUser().getCurrentName())
         );
+
+        save();
     }
 
     public void addBestFriend(SavableChatter chatter) {
@@ -523,7 +525,7 @@ public class SavableChatter implements Loadable<SavableChatter> {
         for (int i = start; i < getBestFriends().size(); i ++) {
             if (i >= start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage()) continue;
             String uuid = new ArrayList<>(getBestFriends().values()).get(i);
-            StreamSender user = asUser();
+            CosmicSender user = asUser();
             if (user == null) return "";
             if (i == start + StreamlineMessaging.getMessages().bestFriendsListMaxPerPage() - 1) {
                 builder.append(ModuleUtils.replaceAllPlayerBungee(user, StreamlineMessaging.getMessages().bestFriendsListEntryLast()));

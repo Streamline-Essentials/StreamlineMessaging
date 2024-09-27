@@ -4,8 +4,8 @@ import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
 import host.plas.savables.SavableChatter;
 import net.streamline.api.SLAPI;
-import net.streamline.api.database.DatabaseType;
-import net.streamline.api.database.modules.DBKeeper;
+import singularity.database.DatabaseType;
+import singularity.database.modules.DBKeeper;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

@@ -2,8 +2,8 @@ package host.plas.events;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.events.modules.ModuleEvent;
-import net.streamline.api.data.console.StreamSender;
+import singularity.events.modules.ModuleEvent;
+import singularity.data.console.CosmicSender;
 import host.plas.configs.ConfiguredChatChannel;
 import host.plas.StreamlineMessaging;
 
@@ -11,10 +11,10 @@ import host.plas.StreamlineMessaging;
 @Getter
 public class ChannelMessageEvent extends ModuleEvent {
     private ConfiguredChatChannel chatChannel;
-    private StreamSender sender;
+    private CosmicSender sender;
     private String message;
 
-    public ChannelMessageEvent(ConfiguredChatChannel chatChannel, StreamSender sender, String message) {
+    public ChannelMessageEvent(ConfiguredChatChannel chatChannel, CosmicSender sender, String message) {
         super(StreamlineMessaging.getInstance());
         setChatChannel(chatChannel);
         setSender(sender);

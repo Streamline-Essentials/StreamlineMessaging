@@ -3,14 +3,14 @@ package host.plas.commands;
 import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.ModuleCommand;
-import net.streamline.api.configs.given.MainMessagesHandler;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.data.console.StreamSender;
+import singularity.command.ModuleCommand;
+import singularity.configs.given.MainMessagesHandler;
+import singularity.modules.ModuleUtils;
+import singularity.data.console.CosmicSender;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import host.plas.savables.ChatterManager;
-import net.streamline.api.utils.UserUtils;
+import singularity.utils.UserUtils;
 
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -34,7 +34,7 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender streamSender, String[] strings) {
+    public void run(CosmicSender streamSender, String[] strings) {
         if (strings[0].isEmpty()) {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
@@ -46,7 +46,7 @@ public class ReplyCommand extends ModuleCommand {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_SELF.get());
             return;
         }
-        StreamSender other = UserUtils.getOrCreateSender(chatter.getReplyTo());
+        CosmicSender other = UserUtils.getOrCreateSender(chatter.getReplyTo());
         if (other == null) {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
@@ -55,7 +55,7 @@ public class ReplyCommand extends ModuleCommand {
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamSender streamSender, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(CosmicSender streamSender, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }

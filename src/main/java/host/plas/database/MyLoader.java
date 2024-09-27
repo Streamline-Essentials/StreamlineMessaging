@@ -3,11 +3,11 @@ package host.plas.database;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import lombok.Getter;
-import net.streamline.api.data.console.StreamSender;
-import net.streamline.api.database.modules.DBKeeper;
-import net.streamline.api.loading.Loadable;
-import net.streamline.api.loading.Loader;
-import net.streamline.api.utils.UserUtils;
+import singularity.data.console.CosmicSender;
+import singularity.database.modules.DBKeeper;
+import singularity.loading.Loadable;
+import singularity.loading.Loader;
+import singularity.utils.UserUtils;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +28,7 @@ public class MyLoader extends Loader<SavableChatter> {
 
     @Override
     public SavableChatter getConsole() {
-        StreamSender console = UserUtils.getConsole();
+        CosmicSender console = UserUtils.getConsole();
         Optional<SavableChatter> optional = getLoaded().stream().filter(a -> a.getIdentifier().equals(console.getUuid())).findFirst();
         if (optional.isPresent()) return optional.get();
 

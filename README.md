@@ -1,2 +1,2 @@
 # StreamlineMessaging
-A Streamline Module for messaging on Minecraft server proxies.
+A Cosmic Module for messaging on Minecraft server proxies.

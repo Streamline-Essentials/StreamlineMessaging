@@ -3,17 +3,15 @@ package host.plas.commands;
 import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.ModuleCommand;
-import net.streamline.api.configs.given.MainMessagesHandler;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.data.console.StreamSender;
+import singularity.command.ModuleCommand;
+import singularity.configs.given.MainMessagesHandler;
+import singularity.modules.ModuleUtils;
+import singularity.data.console.CosmicSender;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
-import host.plas.savables.ChatterManager;
-import net.streamline.api.utils.UserUtils;
+import singularity.utils.UserUtils;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -76,7 +74,7 @@ public class FriendCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender streamSender, String[] strings) {
+    public void run(CosmicSender streamSender, String[] strings) {
         String action;
         if (strings[0].isEmpty()) {
             action = "list";
@@ -90,7 +88,7 @@ public class FriendCommand extends ModuleCommand {
             return;
         }
 
-        switch (action.toLowerCase(Locale.ROOT)) {
+        switch (action.toLowerCase()) {
             case "list":
                 int page;
                 if (strings.length < 2) {
@@ -115,7 +113,7 @@ public class FriendCommand extends ModuleCommand {
                         return;
                     }
 
-                    StreamSender other = UserUtils.getOrCreateSenderByName(strings[2]).orElse(null);
+                    CosmicSender other = UserUtils.getOrCreateSenderByName(strings[2]).orElse(null);
                     if (other == null) {
                         ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                         return;
@@ -159,7 +157,7 @@ public class FriendCommand extends ModuleCommand {
                     return;
                 }
 
-                StreamSender other = UserUtils.getOrCreateSender(username);
+                CosmicSender other = UserUtils.getOrCreateSender(username);
                 if (other == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -209,7 +207,7 @@ public class FriendCommand extends ModuleCommand {
                     return;
                 }
 
-                StreamSender otherRemove = UserUtils.getOrCreateSender(usernameRemove);
+                CosmicSender otherRemove = UserUtils.getOrCreateSender(usernameRemove);
                 if (otherRemove == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -254,7 +252,7 @@ public class FriendCommand extends ModuleCommand {
                 }
 
                 String usernameTeleport = strings[1];
-                StreamSender otherTeleport = UserUtils.getOrCreateSender(usernameTeleport);
+                CosmicSender otherTeleport = UserUtils.getOrCreateSender(usernameTeleport);
                 if (otherTeleport == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -276,7 +274,7 @@ public class FriendCommand extends ModuleCommand {
                 }
 
                 String usernameBest = strings[1];
-                StreamSender otherBest = UserUtils.getOrCreateSender(usernameBest);
+                CosmicSender otherBest = UserUtils.getOrCreateSender(usernameBest);
                 if (otherBest == null) {
                     ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
                     return;
@@ -344,7 +342,7 @@ public class FriendCommand extends ModuleCommand {
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(CosmicSender CosmicSender, String[] strings) {
         if (strings.length <= 1) {
             return new ConcurrentSkipListSet<>(List.of(
                     "list",

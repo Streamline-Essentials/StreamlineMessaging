@@ -2,7 +2,7 @@ package host.plas.timers;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.scheduler.ModuleRunnable;
+import singularity.scheduler.ModuleRunnable;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 

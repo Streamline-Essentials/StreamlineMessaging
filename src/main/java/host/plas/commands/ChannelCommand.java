@@ -3,13 +3,12 @@ package host.plas.commands;
 import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.ModuleCommand;
-import net.streamline.api.configs.given.MainMessagesHandler;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.data.console.StreamSender;
+import singularity.command.ModuleCommand;
+import singularity.configs.given.MainMessagesHandler;
+import singularity.modules.ModuleUtils;
+import singularity.data.console.CosmicSender;
 import host.plas.StreamlineMessaging;
 import host.plas.configs.ConfiguredChatChannel;
-import host.plas.savables.ChatterManager;
 import host.plas.savables.SavableChatter;
 
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -33,7 +32,7 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender streamSender, String[] strings) {
+    public void run(CosmicSender streamSender, String[] strings) {
         try {
             String identifier;
             if (strings[0].equals("")) {
@@ -76,12 +75,12 @@ public class ChannelCommand extends ModuleCommand {
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(CosmicSender CosmicSender, String[] strings) {
         if (strings.length <= 1) {
             ConcurrentSkipListSet<String> r = new ConcurrentSkipListSet<>();
 
             StreamlineMessaging.getChatChannelConfig().getChatChannels().forEach((a, b) -> {
-                if (ModuleUtils.hasPermission(StreamSender, b.getAccessPermission())) r.add(a);
+                if (ModuleUtils.hasPermission(CosmicSender, b.getAccessPermission())) r.add(a);
             });
 
             return r;

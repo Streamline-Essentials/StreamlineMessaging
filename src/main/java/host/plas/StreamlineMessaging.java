@@ -15,10 +15,10 @@ import host.plas.savables.SavableChatter;
 import host.plas.timers.ChatterSaver;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.data.console.StreamSender;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.modules.SimpleModule;
-import net.streamline.api.utils.UserUtils;
+import singularity.data.console.CosmicSender;
+import singularity.modules.ModuleUtils;
+import singularity.modules.SimpleModule;
+import singularity.utils.UserUtils;
 import org.pf4j.PluginWrapper;
 
 import java.io.File;
@@ -75,7 +75,7 @@ public class StreamlineMessaging extends SimpleModule {
         ModuleUtils.listen(mainListener, this);
         getMessagingExpansion().init();
 
-        StreamSender console = UserUtils.getConsole();
+        CosmicSender console = UserUtils.getConsole();
         if (console == null) {
             logSevere("Console is null");
         } else MyLoader.getInstance().getConsole();

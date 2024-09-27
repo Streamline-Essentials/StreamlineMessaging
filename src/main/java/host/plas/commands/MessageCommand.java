@@ -3,14 +3,14 @@ package host.plas.commands;
 import host.plas.database.MyLoader;
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.ModuleCommand;
-import net.streamline.api.configs.given.MainMessagesHandler;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.data.console.StreamSender;
+import singularity.command.ModuleCommand;
+import singularity.configs.given.MainMessagesHandler;
+import singularity.modules.ModuleUtils;
+import singularity.data.console.CosmicSender;
 import host.plas.StreamlineMessaging;
 import host.plas.savables.SavableChatter;
 import host.plas.savables.ChatterManager;
-import net.streamline.api.utils.UserUtils;
+import singularity.utils.UserUtils;
 
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -34,7 +34,7 @@ public class MessageCommand extends ModuleCommand {
     }
 
     @Override
-    public void run(StreamSender streamSender, String[] strings) {
+    public void run(CosmicSender streamSender, String[] strings) {
         if (strings.length < 2) {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.ARGUMENTS_TOO_FEW.get());
             return;
@@ -42,7 +42,7 @@ public class MessageCommand extends ModuleCommand {
 
         String username = strings[0];
 
-        StreamSender other = UserUtils.getOrCreateSenderByName(username).orElse(null);
+        CosmicSender other = UserUtils.getOrCreateSenderByName(username).orElse(null);
         if (other == null) {
             ModuleUtils.sendMessage(streamSender, MainMessagesHandler.MESSAGES.INVALID.USER_OTHER.get());
             return;
@@ -59,7 +59,7 @@ public class MessageCommand extends ModuleCommand {
     }
 
     @Override
-    public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
+    public ConcurrentSkipListSet<String> doTabComplete(CosmicSender CosmicSender, String[] strings) {
         return ModuleUtils.getOnlinePlayerNames();
     }
 }

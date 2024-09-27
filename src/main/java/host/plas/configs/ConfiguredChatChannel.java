@@ -2,11 +2,11 @@ package host.plas.configs;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.streamline.api.command.CommandHandler;
-import net.streamline.api.command.ModuleCommand;
-import net.streamline.api.data.players.StreamPlayer;
-import net.streamline.api.modules.ModuleUtils;
-import net.streamline.api.data.console.StreamSender;
+import singularity.command.CommandHandler;
+import singularity.command.ModuleCommand;
+import singularity.data.players.CosmicPlayer;
+import singularity.modules.ModuleUtils;
+import singularity.data.console.CosmicSender;
 import org.jetbrains.annotations.NotNull;
 import host.plas.StreamlineMessaging;
 import host.plas.events.ChannelMessageEvent;
@@ -58,7 +58,7 @@ public class ConfiguredChatChannel implements Comparable<ConfiguredChatChannel> 
         this.commandBase = commandBase;
     }
 
-    public void sendMessageAs(StreamSender user, String message) {
+    public void sendMessageAs(CosmicSender user, String message) {
         if (ModuleUtils.isCommand(message)) ModuleUtils.runAs(user, message);
         if (getIdentifier().equals("none")) {
             ModuleUtils.chatAs(user, message);
@@ -80,8 +80,8 @@ public class ConfiguredChatChannel implements Comparable<ConfiguredChatChannel> 
                 });
                 break;
             case LOCAL:
-//                if (! (user instanceof StreamPlayer)) return;
-//                StreamPlayer player = (StreamPlayer) user;
+//                if (! (user instanceof CosmicPlayer)) return;
+//                CosmicPlayer player = (CosmicPlayer) user;
 
                 ModuleUtils.getUsersOn(user.getServerName()).forEach(a -> {
                     ModuleUtils.sendMessage(a, user, correctlyFormattedMessage);
@@ -119,17 +119,17 @@ public class ConfiguredChatChannel implements Comparable<ConfiguredChatChannel> 
         }
 
         @Override
-        public void run(StreamSender StreamSender, String[] strings) {
+        public void run(CosmicSender CosmicSender, String[] strings) {
             if (strings.length == 0) {
-                ModuleUtils.sendMessage(StreamSender, "Usage: /" + channel.getCommandBase() + " <message>");
+                ModuleUtils.sendMessage(CosmicSender, "Usage: /" + channel.getCommandBase() + " <message>");
                 return;
             }
 
-            channel.sendMessageAs(StreamSender, StringUtils.argsToString(strings));
+            channel.sendMessageAs(CosmicSender, StringUtils.argsToString(strings));
         }
 
         @Override
-        public ConcurrentSkipListSet<String> doTabComplete(StreamSender StreamSender, String[] strings) {
+        public ConcurrentSkipListSet<String> doTabComplete(CosmicSender CosmicSender, String[] strings) {
             return new ConcurrentSkipListSet<>(List.of("<message>"));
         }
     }
