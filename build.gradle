@@ -49,12 +49,12 @@ dependencies {
     compileOnly 'net.luckperms:api:5.4'
 
     // CosmicCore
-    compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
-    annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:main-SNAPSHOT'
+    compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:master-SNAPSHOT'
+    annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-API:master-SNAPSHOT'
 
     if (rootProject.ext.needs_bapi) {
-        compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
-        annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:main-SNAPSHOT'
+        compileOnly 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:master-SNAPSHOT'
+        annotationProcessor 'com.github.Streamline-Essentials.StreamlineCore:StreamlineCore-BAPI:master-SNAPSHOT'
     }
 }
 
